@@ -1,17 +1,18 @@
 import {
   StyleSheet,
   Text,
-  View,
-} from 'react-native';
+  } from 'react-native';
 
-export default function DescripTypScreen() {
-  
+
+export default function DisplayUserAlbumScreen() {
+
   return (
     <View style={styles.mainContainer}>
-     <Text>DescripTypScreen</Text>
+     <Text>Display User Album Screen</Text>
    </View>
  );
 }
+
 
 const styles = StyleSheet.create({
   mainContainer: {
