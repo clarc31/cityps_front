@@ -1,140 +1,161 @@
-// import { useEffect, useState } from 'react';
-// import { TextInput } from 'react-native';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { login, logout } from '../reducers/user';
 import {
     Image,
-    ImageBackground,
-    KeyboardAvoidingView,
-    Platform,
     StyleSheet,
-    Text,
     TextInput,
     TouchableOpacity,
     View,
   } from 'react-native';
-//   import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
+//import { useEffect, useState } from 'react';
+//import { useDispatch, useSelector } from 'react-redux';
+// import { login } from '../reducers/user';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-
+import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
 export default function SignUpScreen() {
-// 	const dispatch = useDispatch();
-// 	// const user = useSelector((state) => state.user.value);
-//     const [signUpNom, setSignUpNom] = useState('');
-// 	const [signUpPrenom, setSignUpPrenom] = useState('');
-// 	const [signUpPseudo, setSignUpPseudo] = useState('');
-// 	const [signUpEmail, setSignUpEmail] = useState('');
-// 	const [signUpPassword, setSignUpPassword] = useState('');
 
+    const dispatch = useDispatch();
+    // const user = useSelector((state) => state.user.value);
 
+    const [signUpNom, setSignUpNom] = useState('');
+    const [signUpPrenom, setSignUpPrenom] = useState('');
+    const [signUpPseudo, setSignUpPseudo] = useState('');
+    const [signUpEmail, setSignUpEmail] = useState('');
+    const [signUpPassword, setSignUpPassword] = useState('');
 
-// const handleRegister = () => {
-//     fetch('http://localhost:3000/users/signup', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify({ nom: signUpNom, prenom: signUpPrenom, pseudo: signUpPseudo, email: signUpEmail, password: signUpPassword}),
-//     }).then(response => response.json())
-//         .then(data => {
-//             if (data.result) {
-//                 dispatch(login({ nom: signUpNom, token: data.token, prenom: signUpPrenom, pseudo: signUpPseudo, email: signUpEmail }));
-//                 setSignUpNom('');
-//                 setSignUpPrenom('');
-//                 setSignUpPseudo('');
-//                 setSignUpEmail('');
-//                 setSignUpPassword('');
-                
-//             }
-//         });
-// };
+/*
+const handleRegister = () => {
+
+    fetch('http://localhost:3000/users/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nom: signUpNom, prenom: signUpPrenom, pseudo: signUpPseudo, email: signUpEmail, password: signUpPassword}),
+    }).then(response => response.json())
+        .then(data => {
+            if (data.result) {
+                dispatch(login({ nom: signUpNom, token: data.token, prenom: signUpPrenom, pseudo: signUpPseudo, email: signUpEmail }));
+                setSignUpNom('');
+                setSignUpPrenom('');
+                setSignUpPseudo('');
+                setSignUpEmail('');
+                setSignUpPassword('');
+                navigation.navigate('Home');
+            }
+        });
+};
+
+*/
+
+const [selected, setSelected] = useState("");
+  
+  const data = [
+      {key:'1', value:'Activités pour les enfants'},
+      {key:'2', value:'Patrimoine historique '},
+      {key:'3', value:'Musées, galeries, expositions'},
+      {key:'4', value:'Cuisines, produits du terroir'},
+      {key:'5', value:'Sorties en nature'},
+      {key:'6', value:'Activités sportives '},
+      {key:'7', value:'Loisirs créatifs'},
+      {key:'8', value:'Loisirs culturels'},
+      {key:'9', value:'Idées de sorties'},
+      {key:'10', value:'Spectacles'},
+      {key:'11', value:"Parc d'attraction à thème"},
+      {key:'12', value: "Activités « Bien-être »"},
+  ]
+  
+
 return(
     <View style={styles.mainContainer}>
+        <FontAwesome name='close' size={45} color='#000000' />
         <View style={styles.citypsContainer}>
-            <Image source={require('../assets/logosignup.png')} style={styles.Image}/>
-            {/* <FontAwesome name='circle-thin' size={150} color="#adebf6"  onPress={() => handleConnection()}/> */}
+        <Image style={styles.image} source={require('../assets/logosignup.png')} />
         </View>
-        <View style={styles.nomContainer}>
-            <View style={styles.inputContainer}>
-                <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputName} placeholder="  Email"/>
-                <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputSurname} placeholder="  Email"/>
-                <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputUserName} placeholder="  Email"/>
-            </View>
-            <View>
-                <Image source={require('../assets/favicon.png')} style={styles.Image1}></Image>
-            </View>
+
+    <View style={styles.inputContainer1}>
+        <View>
+        <TextInput placeholder="Nom" onChangeText={(value) => setSignUpNom(value)} value={signUpNom} style={styles.input1} />
+        <TextInput placeholder="Prenom" onChangeText={(value) => setSignUpPrenom(value)} value={signUpPrenom} style={styles.input1} />
+        <TextInput placeholder="Pseudo" onChangeText={(value) => setSignUpPseudo(value)} value={signUpPseudo} style={styles.input1} />
         </View>
-        <View style={styles.emailContainer}>
-            <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputEmail} placeholder="  Email"/>
-            <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputPassword} placeholder="  Email"/>
-            <TextInput />
-        </View>
-        <View style={styles.scrollContainer}>
-            
-        </View>
-        <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => handleRegister()}></TouchableOpacity>
-        </View>
+        <Image source={require('../assets/avatar.png')}  className={styles.avatar} />      
     </View>
-)
-}
-const styles = StyleSheet.create({
-    mainContainer:{
-        margin: 0,
-        padding: 0,
-        backgroundColor: "#77d0de",
-        flex: 1,
-        width: '100%',
-        alignItems: "center"
-    },
-    citypsContainer:{
-        height: "10%",
-        marginTop: "20%"
-    },
-    nomContainer:{
-        marginTop: '50%',
-        height: "30%",
-        // flex: 1,
-        flexDirection: 'row',
-        width: '50%',
-        justifyContent: 'space-between'
-        // flex: 1,
-        
-    },
-    inputContainer:{
-        flex: 1,
-        justifyContent: 'space-evenly',
-        
-    },
-    inputName:{
-        color: 'yellow',
-        width: "80%",
-        height: "15%",
-        borderRadius: 20,
-        backgroundColor: "#d6f5fa"
-    },
-    inputSurname:{
-        width: "85%",
-        height: "15%",
-        borderRadius: 20,
-        backgroundColor: "#d6f5fa"
-    },
-    inputUserName:{
-        width: "85%",
-        height: "15%",
-        borderRadius: 20,
-        backgroundColor: "#d6f5fa"
-    },
-    inputEmail:{
-        width: "85%",
-        height: "15%",
-        borderRadius: 20,
-        backgroundColor: "#d6f5fa"
-    },
-    inputPassword:{
-        width: "85%",
-        height: "15%",
-        borderRadius: 20,
-        backgroundColor: "#d6f5fa"
-    }
+
+        <View style={styles.inputContainer2}>
+        <TextInput placeholder="Email" onChangeText={(value) => setSignUpEmail(value)} value={signUpEmail} style={styles.input2} />
+        <TextInput placeholder="Password" onChangeText={(value) => setSignUpPassword(value)} value={signUpPassword} style={styles.input2} />
+        </View>
     
-})
+    <MultipleSelectList 
+        setSelected={(val) => setSelected(val)} 
+        data={data} 
+        save="value"
+        onSelect={() => alert(selected)} 
+        label="Mes envies"
+    />
+
+    <View style={styles.buttonContainer}>
+        <TouchableOpacity onPress={() => handleRegister()}>
+        <FontAwesome name='circle-thin' size={150} color="#adebf6"  />
+        </TouchableOpacity>
+    </View>
+
+    </View>
+)}
+
+
+const styles = StyleSheet.create({
+    mainContainer: {
+      flex: 1,
+      backgroundColor: '#77D0DE',
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+
+    image: {
+        width: '20%',
+        height: '20%',
+      },
+    
+    inputContainer1: {
+        justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
+    },
+
+    input1: {
+        width: "50%",
+        height: "15%",
+        borderRadius: 20,
+        backgroundColor: "#d6f5fa",
+      },
+
+    avatar:{
+        width: '46',
+        height:'46',
+        borderRadius: 50,
+      },
+
+      inputContainer2: {
+        justifyContent: 'space-between',
+        width: '100%',
+        alignItems: 'center',
+    },
+
+    input2: {
+        width: "85%",
+        height: "15%",
+        borderRadius: 20,
+        backgroundColor: "#d6f5fa",
+      },
+
+    buttonContainer:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingBottom: 50,
+      },
+
+  });
+
