@@ -28,21 +28,23 @@ const TabNavigator = () => {
       tabBarIcon: ({ backgroundColor,color, size }) => {
         let iconName = '';
 
-        if (route.name === 'DisplayUserAlbum') {
-          iconName = 'layer-group';
-        } else if (route.name === 'NewPost') {
-          iconName = 'file-pen';
+        if (route.name === 'User Albums') {
+          iconName = 'file-text';
+        } else if (route.name === 'New Post') {
+          iconName = 'edit';
+        } else {
+          iconName = 'home';
         }
-
         return <FontAwesome name={iconName} size={size} color={color} backgroundColor={backgroundColor} />;
       },
       tabBarActiveTintColor: '#F77B55',
-      tabBarInactiveTintColor: '#D6F5FA',
-      tabBarBackground: '#77D0DE',
+      tabBarInactiveTintColor: '#475059',
+      tabBarBackgroundColor: '#77D0DE',
       headerShown: false,
     })}>
-      <Tab.Screen name="DisplayUserAlbum" component={DisplayUserAlbumScreen} />
-      <Tab.Screen name="NewPost" component={NewPostScreen} />
+      <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="User Albums" component={DisplayUserAlbumScreen} />
+      <Tab.Screen name="New Post" component={NewPostScreen} />
     </Tab.Navigator>
   );
 };
@@ -53,10 +55,9 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer >
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name='SignUp'component={SignUpScreen} />
         <Stack.Screen name='SignIn'component={SignInScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        <Stack.Screen name='SignUp'component={SignUpScreen} />
+        <Stack.Screen name="Home" component={TabNavigator} />
         </Stack.Navigator>
       </NavigationContainer>
       </Provider>

@@ -15,7 +15,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 
-export default function SignInScreen() {
+export default function SignInScreen({ navigation }) {
 	// const dispatch = useDispatch();
 
 // const [signInEmail, setSignInEmail] = useState('');
@@ -46,13 +46,13 @@ return (
             <Image source={require('../assets/logisignin.png')}/>
         </View>
         <View style={styles.containerSignIn}>
-           <TouchableOpacity   style={styles.inputSignUp}><Text>  S'inscrire (c'est gratuit!)</Text></TouchableOpacity>
+           <TouchableOpacity    onPress={() => navigation.navigate('SignUp')} style={styles.inputSignUp}><Text>  S'inscrire (c'est gratuit!)</Text></TouchableOpacity>
             <Text>Déjà inscrit ?</Text>
             <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputEmail} placeholder="  Email" />
             <TextInput onChangeText={(value) => setSignInPassword(value)}  style={styles.inputPassword} placeholder="  Password" />
         </View>
         <View style={styles.containerButton}>
-        <FontAwesome name='circle-thin' size={150} color="#adebf6"  onPress={() => handleConnection()}/>
+        <FontAwesome name='circle-thin' size={150} color="#adebf6"  onPress={() => navigation.navigate('Home')} />
         </View>
     </View>
 )

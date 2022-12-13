@@ -6,14 +6,14 @@ import {
     View,
   } from 'react-native';
 
-//import { useEffect, useState } from 'react';
-//import { useDispatch, useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 // import { login } from '../reducers/user';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import { MultipleSelectList } from 'react-native-dropdown-select-list'
 
-export default function SignUpScreen() {
+export default function SignUpScreen ({ navigation }) {
 
     const dispatch = useDispatch();
     // const user = useSelector((state) => state.user.value);
@@ -74,11 +74,12 @@ return(
 
     <View style={styles.inputContainer1}>
         <View>
+        <Image source={require('../assets/avatar.png')}  className={styles.avatar} />    
         <TextInput placeholder="Nom" onChangeText={(value) => setSignUpNom(value)} value={signUpNom} style={styles.input1} />
         <TextInput placeholder="Prenom" onChangeText={(value) => setSignUpPrenom(value)} value={signUpPrenom} style={styles.input1} />
         <TextInput placeholder="Pseudo" onChangeText={(value) => setSignUpPseudo(value)} value={signUpPseudo} style={styles.input1} />
         </View>
-        <Image source={require('../assets/avatar.png')}  className={styles.avatar} />      
+         
     </View>
 
         <View style={styles.inputContainer2}>
@@ -90,12 +91,12 @@ return(
         setSelected={(val) => setSelected(val)} 
         data={data} 
         save="value"
-        onSelect={() => alert(selected)} 
-        label="Mes envies"
+        //onSelect={() => alert(selected)} 
+        placeholder="Mes envies"
     />
 
     <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => handleRegister()}>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')}>
         <FontAwesome name='circle-thin' size={150} color="#adebf6"  />
         </TouchableOpacity>
     </View>
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     },
 
-    image: {
+    /* image: {
         width: '20%',
         height: '20%',
       },
@@ -156,6 +157,6 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         paddingBottom: 50,
       },
-
+*/
   });
 
