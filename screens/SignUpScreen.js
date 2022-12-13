@@ -34,7 +34,7 @@ export default function SignUpScreen() {
 
     const formatedData = envie.map((el, i) =>{
         console.log('category', el.category)
-        return <Text key={i}>{el.category}</Text>
+        return <Text key={i} >{el.category}</Text>
     })
 
 
