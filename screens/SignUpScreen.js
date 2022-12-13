@@ -17,7 +17,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const BACKEND = 'https://cityps-back.vercel.app';
 
-export default function SignUpScreen() {
+export default function SignUpScreen ({ navigation }) { 
     const [envie, setEnvie] = useState([]);
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -98,7 +98,7 @@ return(
             </View>    
         </View>
         <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => handleRegister()}>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
             <FontAwesome name='circle-thin' size={150} color="#adebf6"  />
             </TouchableOpacity>
         </View>
