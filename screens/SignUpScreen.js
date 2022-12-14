@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
     },
     image:{
         alignItems: 'center',
-        // marginTop: "15%"
     },
     input1: {
         width: "90%",
