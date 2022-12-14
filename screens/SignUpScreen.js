@@ -7,68 +7,124 @@ import {
     View,
     KeyboardAvoidingView,
     Modal,
-    FlatList
   } from 'react-native';
 
 import { useState, useEffect } from 'react';
 //import { useDispatch, useSelector } from 'react-redux';
 // import { login } from '../reducers/user';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { CheckBox } from 'react-native-elements';
 
 const BACKEND = 'https://cityps-back.vercel.app';
 
 export default function SignUpScreen ({ navigation }) { 
-    const [envie, setEnvie] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect (() =>{
+  const [envie, setEnvie] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  
+    
+    useEffect (() =>{
       fetch(`${BACKEND}/categories`)
       .then(response => response.json())
       .then(dataDb => {
-        setEnvie(dataDb.data)
-        // console.log('data',dataDb.data.category)
-        //   console.log(envie)
-          //   setEnvie(formatedData);
-        });
+        // ON AJOUTE UNE CLE ISSELECTED A CHACUNE DES CATEGORIES
+        const formattedCategories = dataDb.data.map((categorie) => {
+          return {...categorie, isSelected: false}
+        })
+        // ON STOCKE CE NOUVEAU TABLEAU DANS UN STATE
+        setEnvie(formattedCategories)
+      });
     },[]);
+    // CETTE FONCTION RECOIT L ID DE LA CATEGORIE SUR LAQUELLE ON A CLIQUE
+    // PUIS COMPARE L ID RECUPERE AVEC LES ID DANS LE TABLEAU 
+    // SI MATCH ON INVERSE LA VALEUR DE ISSELECTED
+    // ET ON REASSIGNE LE TABLEAU AU STATE
+    const handleCheckbox = (id) => {
+      let temp = envie.map((fav) => {
+        console.log(fav._id)
+        if (id === fav._id) {
+          return {...fav, isSelected: !fav.isSelected}
+        }
+        // envieChecked.push(fav._id)
+        return fav
+      })
+      setEnvie(temp)
+    }
+    // if(isSelected === true){
+    //   envieChecked.push()
+    // }
+    
 
+    // ON BOUCLE SUR LE TABLEAU DE CATEGORIES POUR CREER UNE CHECKBOX A CHAQUE CATEGORIE
     const formatedData = envie.map((el, i) =>{
-        console.log('category', el.category)
-        return <Text key={i} >{el.category}</Text>
+        return (
+                <View style={styles.checkbox}>
+                  <CheckBox  checked={el.isSelected} onPress={() => handleCheckbox(el._id)} style={styles.checkbox} />
+                  <Text key={i} style={styles.label}>
+                    {el.category}
+                  </Text>
+                </View> 
+        )
     })
 
 
     // const dispatch = useDispatch();
     // const user = useSelector((state) => state.user.value);
 
-    // const [signUpNom, setSignUpNom] = useState('');
-    // const [signUpPrenom, setSignUpPrenom] = useState('');
-    // const [signUpPseudo, setSignUpPseudo] = useState('');
-    // const [signUpEmail, setSignUpEmail] = useState('');
-    // const [signUpPassword, setSignUpPassword] = useState('');
+    const [signUpName, setSignUpName] = useState('');
+    const [signUpFirstName, setSignUpFirstname] = useState('');
+    // const [signUpPhoto, setSignUpPhoto] = useState('');
+    const [signUpUserName, setSignUpUserName] = useState('');
+    const [signUpEmail, setSignUpEmail] = useState('');
+    const [signUpPassword, setSignUpPassword] = useState('');
+    const [signupInscriptionDate, setSignUpInscriptionDate] = useState('');
+    
 
-/*
+
 const handleRegister = () => {
-
-    fetch('http://localhost:3000/users/signup', {
+  const idsCategory = envie.map(category => {
+    if(category.isSelected) {
+      return category._id
+    }
+  })
+  const formData = new FormData();
+  formData.append('photoFromFront',{
+    uri: photo.uri,
+    name: 'photo.jpg',
+    type: 'image/jpeg',
+  })
+    fetch(`${BACKEND}/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: signUpNom, prenom: signUpPrenom, pseudo: signUpPseudo, email: signUpEmail, password: signUpPassword}),
+        body: JSON.stringify({ nom: signUpName,
+           prenom: signUpFirstName,
+            formData,
+             pseudo: signUpUserName,
+              email: signUpEmail,
+               password: signUpPassword,
+                 date: signupInscriptionDate}),
     }).then(response => response.json())
         .then(data => {
             if (data.result) {
-                dispatch(login({ nom: signUpNom, token: data.token, prenom: signUpPrenom, pseudo: signUpPseudo, email: signUpEmail }));
-                setSignUpNom('');
-                setSignUpPrenom('');
-                setSignUpPseudo('');
+                dispatch(login({ nom:signUpName,
+                  prenom: signUpFirstName,
+                  photo:signUpPhoto,
+                  pseudo:signUpUserName,
+                  email: signUpEmail,
+                  token: data.token,
+                  date:signupInscriptionDate }));
+                setSignUpName('');
+                setSignUpFirstname('');
+                setSignUpPhoto('');
+                setSignUpUserName('');
                 setSignUpEmail('');
                 setSignUpPassword('');
+                setSignUpInscriptionDate('');
                 navigation.navigate('Home');
             }
         });
 };
 
-*/
+
 
 
 const handleSubmit = () => {
@@ -203,7 +259,9 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         width: '80%',
-        height: '80%'
+        height: '80%',
+        // justifyContent:"flex-start"
+        alignItems: "flex-start"
       },
       Button:{
         width: '80%',
@@ -213,7 +271,37 @@ const styles = StyleSheet.create({
         paddingTop: 8,
         backgroundColor: '#f77b55',
         borderRadius: 10,
-      }
+      },
+      ////////////////////////////////////MODAL STYLE INTERNE/////////////////////////////////////////////////////////////
+      checkbox:{
+        flex: 1,
+        justifyContent:'flex-start',
+        // width: '80%'
+        flexDirection: "row",
+        alignItems: "center"
+
+      },
+      container: {
+        // flex: 1,
+        alignItems: 'flex-start'
+      },
+    
+      textContainer:{
+        // flex:1,
+        // justifyContent: 'space-between',
+        // alignItems: 'flex-end',
+      },
+      checkboxContainer: {
+        justifyContent: 'flex-start',
+        // marginRight: '80%'
+      },
+      // checkbox:{
+      //   alignSelf: 'center'
+      // },
+      label: {
+        margin: 8,
+      },
+
 
     //   inputContainer2: {
     //     justifyContent: 'space-between',
