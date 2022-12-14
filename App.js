@@ -37,10 +37,11 @@ const TabNavigator = () => {
         }
         return <FontAwesome name={iconName} size={size} color={color} backgroundColor={backgroundColor} />;
       },
+      headerShown: false,
       tabBarActiveTintColor: '#F77B55',
       tabBarInactiveTintColor: '#475059',
       tabBarBackgroundColor: '#77D0DE',
-      headerShown: false,
+      
     })}>
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="User Albums" component={DisplayUserAlbumScreen} />
