@@ -11,6 +11,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from 'react-native';
 
 import { SearchBar } from 'react-native-elements';
@@ -26,8 +27,37 @@ export default function HomeScreen({ navigation }) {
 };
 
 
-  
-  
+  /*
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
+
+  const [city, setCity] = useState('');
+
+  // Modifiez le fonctionnement de PlacesScreen afin que lorsqu’une nouvelle ville est ajoutée (depuis l’input reliée 
+  // à l’API Adresses), la route POST /places soit appelée afin de l’enregistrer en base de données.
+
+  const handleSubmit = () => {
+    if (city.length === 0) {
+      return;
+    }
+
+// 1st request: get geographic data from API
+fetch(`https://api-adresse.data.gouv.fr/search/?q=${city}`)
+.then((response) => response.json())
+.then((data) => {
+  // Nothing is done if no city is found by API
+  if (data.features.length === 0) {
+    return;
+  }
+
+const fistCity = data.features[0];
+const newPlace = {
+name: fistCity.properties.city,
+latitude: fistCity.geometry.coordinates[1],
+longitude: fistCity.geometry.coordinates[0],
+};
+
+*/
 
   // géolocalisation dans un composant
   const [location, setLocation] = useState({});
@@ -40,60 +70,64 @@ export default function HomeScreen({ navigation }) {
         Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High},
           (location) => {
             setLocation(location.coords.accuracy);
+            
           });
       }
     })();
   }, []);
 
-  
+
 
   return (
-    <View style={styles.mainContainer}>
+  <View style={styles.mainContainer}>
 
-    <View style={styles.topContainer}>
-    <TouchableOpacity >
-          <Icon name='bars' size={40} color='#475059' />
-          </TouchableOpacity>
+  <View style={styles.topContainer}>
 
-        <SearchBar style={styles.SearchBar}
-          round
-          searchIcon={{ size: 24 }}
-          placeholder="Indiquez votre ville..."
-          onChangeText={updateSearch}
-          value={search}
-          >
-       </SearchBar>
-       
+  <View style={styles.rowContainer}>
+
+<SearchBar 
+lightTheme
+searchIcon={{ size: 24 }}
+showCancel
+containerStyle={{backgroundColor: 'white', width: 300, heigth: 10, justifyContent: 'center', borderWidth: 0, borderRadius: 10}}
+placeholder="Indiquez votre ville..."
+onChangeText={updateSearch}
+value={search}
+>
+</SearchBar>
+
+<TouchableOpacity >
+<Icon name='bars' size={40} color='#475059' style={styles.menuIcon}/>
+</TouchableOpacity>
+
+</View>
+
     <MapView 
       Type="hybrid" style={styles.map} title="My location" pinColor='#FED579'
       showsUserLocation={true}
       followsUserLocation={true}
       >
-    {location && (
-          <Marker coordinate={location} title="My position" pinColor="#fecb2d" />)}
-     
-         </MapView>
-         
         
-         
-    
+
+        <Marker coordinate={location} title="My position" pinColor="#fecb2d" />
      
+    </MapView>
+    
+  </View>   
 
-    </View>   
-
-      <View style={styles.bottomContainer}>
+    <View style={styles.bottomContainer}>
     
         <View style={styles.tipsList}>
-        <Image source={require('../assets/avatar.png')}  style={styles.avatar} />
+        <Image source={require('../assets/avatar.png')}  style={styles.avatar} /> 
         <Text style={styles.title}> Titre </Text>
         <Text style={styles.place}> Lieu </Text>
         <Text style={styles.content}> Premières lignes du descriptyps</Text>
         
-        </View>
+    </View>
 
-      </View>
+  </View>
 
-     </View>
+  </View>
 
   )};
 
@@ -103,41 +137,49 @@ const styles = StyleSheet.create({
 
   mainContainer: {
     flex: 1,
-    backgroundColor: '#77D0DE',
-      flexDirection: "vertical",
-      justifyContent: 'space-between',
-      alignItems: "center",
+    alignItems: 'center',
+    justifyContent: 'center',  
    margin: 0,
    padding: 0,
   },
 
-  SearchBar: {
-    justifyContent: 'center',
-    width: '100%',
-    flex: 1,
-    Color: 'white',
-    borderRadius: 15,
-    margin: 0,
-    padding: 0,
-   
-  },
+  
   
   topContainer: {
-    flex: 0.5,
+    //justifyContent: 'space-between',
+    flex: 1.2,
+    marginTop: 0,
+    width: '100%',
   },
 
-  bottomContainer: {
-    flex: 0.5,
+  rowContainer: {
+  flexDirection :'row',
+  justifyContent: 'space-around',
+  marginTop: '12%',
+  },
+  
+  menuIcon: {
+    flexDirection :'column',
+    justifyContent: 'center',
   },
 
   map: {
-    flex: 1,
-    width: 300,
-    height: 500,
-    margintop: 0,
-    
-  
+      flex: 1.2,
+      marginTop: 0,
+    },
    
+  bottomContainer: {
+    flex: 0.8,
+    backgroundColor: '#77D0DE',
+    padding: 0,
+    width: '100%',
+  },
+
+
+  tipsList:  {
+    alignItems: 'flex-start',
+    flexDirection: "column",
+    flexWrap: "wrap",
   },
 
   avatar: {
@@ -145,6 +187,7 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 30,
   }
+
 });
 
 
