@@ -7,9 +7,11 @@ import {
 
 export default function DisplayUserAlbumScreen() {
 
+ 
   return (
     <View style={styles.mainContainer}>
      <Text>Display User Album Screen</Text>
+    
    </View>
  );
 }
