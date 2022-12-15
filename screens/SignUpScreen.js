@@ -17,7 +17,8 @@ import { CheckBox } from 'react-native-elements';
 
 import * as ImagePicker from 'expo-image-picker';
 
-const BACKEND = 'https://cityps-back.vercel.app';
+// const BACKEND = 'https://cityps-back.vercel.app';
+const BACKEND = 'http://192.168.142.41:3000';
 
 export default function SignUpScreen ({ navigation }) { 
   const [envie, setEnvie] = useState([]);
@@ -42,18 +43,14 @@ export default function SignUpScreen ({ navigation }) {
     // ET ON REASSIGNE LE TABLEAU AU STATE
     const handleCheckbox = (id) => {
       let temp = envie.map((fav) => {
-        console.log(fav._id)
         if (id === fav._id) {
           return {...fav, isSelected: !fav.isSelected}
         }
-        // envieChecked.push(fav._id)
         return fav
       })
       setEnvie(temp)
     }
-    // if(isSelected === true){
-    //   envieChecked.push()
-    // }
+
     
 
     // ON BOUCLE SUR LE TABLEAU DE CATEGORIES POUR CREER UNE CHECKBOX A CHAQUE CATEGORIE
@@ -74,56 +71,66 @@ export default function SignUpScreen ({ navigation }) {
 
     const [signUpName, setSignUpName] = useState('');
     const [signUpFirstName, setSignUpFirstname] = useState('');
-    // const [signUpPhoto, setSignUpPhoto] = useState('');
     const [signUpUserName, setSignUpUserName] = useState('');
     const [signUpEmail, setSignUpEmail] = useState('');
     const [signUpPassword, setSignUpPassword] = useState('');
-    const [signupInscriptionDate, setSignUpInscriptionDate] = useState('');
-    
 
+    console.log(signUpFirstName)
 
 const handleRegister = () => {
   const idsCategory = envie.map(category => {
     if(category.isSelected) {
       return category._id
     }
+    return;
   })
+
+  console.log("idsCategory", idsCategory)
+
+  const idsCategoryFiltered = idsCategory.filter(category => category !== undefined)
+
+  console.log("idsCategoryFiltered", idsCategoryFiltered)
+
   const formData = new FormData();
   formData.append('photoFromFront',{
-    uri: photo.uri,
+    uri: image,
     name: 'photo.jpg',
     type: 'image/jpeg',
-  })
-    fetch(`${BACKEND}/signup`, {
+  });
+  formData.append("name", signUpName)
+  formData.append("firstname", signUpFirstName)
+  formData.append("username", signUpUserName)
+  formData.append("email", signUpEmail)
+  formData.append("password", signUpPassword)
+  formData.append("categories", idsCategoryFiltered)
+
+  fetch(`${BACKEND}/users/signup`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nom: signUpName,
-           prenom: signUpFirstName,
-            formData,
-             pseudo: signUpUserName,
-              email: signUpEmail,
-               password: signUpPassword,
-                 date: signupInscriptionDate}),
-    }).then(response => response.json())
-        .then(data => {
-            if (data.result) {
-                dispatch(login({ nom:signUpName,
-                  prenom: signUpFirstName,
-                  photo:signUpPhoto,
-                  pseudo:signUpUserName,
-                  email: signUpEmail,
-                  token: data.token,
-                  date:signupInscriptionDate }));
-                setSignUpName('');
-                setSignUpFirstname('');
-                setSignUpPhoto('');
-                setSignUpUserName('');
-                setSignUpEmail('');
-                setSignUpPassword('');
-                setSignUpInscriptionDate('');
-                navigation.navigate('Home');
-            }
-        });
+        body: formData,
+    }).then((response) => response.json())
+    .then((data) => {
+      console.log('responseJson', data)
+    })
+    // .then(response => response.json())
+        // .then(data => {
+        //     if (data.result) {
+        //         dispatch(login({ nom:signUpName,
+        //           prenom: signUpFirstName,
+        //           photo:signUpPhoto,
+        //           pseudo:signUpUserName,
+        //           email: signUpEmail,
+        //           token: data.token,
+        //           date:signupInscriptionDate }));
+                // setSignUpName('');
+                // setSignUpFirstname('');
+                // setSignUpImage('');
+                // setSignUpUserName('');
+                // setSignUpEmail('');
+                // setSignUpPassword('');
+                // setSignUpInscriptionDate('');
+                // navigation.navigate('Home');
+        //     }
+        // });
 };
 
 const handleSubmit = () => {
@@ -139,11 +146,9 @@ const pickImage = async () => {
     quality: 1,
   });
 
-  console.log(result);
 
   if (!result.canceled) {
     setImage(result.assets[0].uri);
-    console.log('uri détectée',result.assets[0].uri)
   }
 };
 
@@ -159,9 +164,9 @@ return(
         {/* </View>       */}
         <View style={styles.inputContainer1}>
             <View style={styles.inputContainerValue}>
-                <TextInput placeholder="  Nom" onChangeText={(value) => setSignUpNom(value)}  style={styles.input1} />
-                <TextInput placeholder="  Prenom" onChangeText={(value) => setSignUpPrenom(value)}  style={styles.input1} />
-                <TextInput placeholder="  Pseudo" onChangeText={(value) => setSignUpPseudo(value)}  style={styles.input1} />
+                <TextInput placeholder="  Nom" onChangeText={(value) => setSignUpName(value)}  style={styles.input1} />
+                <TextInput placeholder="  Prenom" onChangeText={(value) => setSignUpFirstname(value)}  style={styles.input1} />
+                <TextInput placeholder="  Pseudo" onChangeText={(value) => setSignUpUserName(value)}  style={styles.input1} />
                 <TouchableOpacity onPress={() => handleSubmit()}  style={styles.button} activeOpacity={0.9}></TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => pickImage()}>
@@ -169,7 +174,7 @@ return(
             </TouchableOpacity>    
         </View>
         <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity onPress={() => handleRegister()}>
             <FontAwesome name='circle-thin' size={150} color="#adebf6"  />
             </TouchableOpacity>
         </View>
@@ -178,7 +183,7 @@ return(
                 <View style={styles.modal}>
                     {formatedData}
                 </View>
-            <TouchableOpacity onPress={() => handleClose()} style={styles.Button} activeOpacity={0.8}>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.Button} activeOpacity={0.8}>
               <Text style={styles.textButton}>start</Text>
             </TouchableOpacity>
             </View>
@@ -209,9 +214,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly',
         width: '100%', 
         height: '20%',
-        // paddingBottom: '20%'
-        // marginTop: '15%'
-        // marginBottom: '50%'
     },
     image:{
         alignItems: 'center',
@@ -236,9 +238,6 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '100%',
         alignItems: 'flex-start',
-        // paddingBottom: '20%'
-        
-        // justifyContent: 'space-evenly',
       },
       input2:{
         width: "95%",
@@ -317,19 +316,4 @@ const styles = StyleSheet.create({
         margin: 8,
       },
 
-
-    //   inputContainer2: {
-    //     justifyContent: 'space-between',
-    //     width: '100%',
-    //     alignItems: 'center',
-    // },
-
-    // buttonContainer:{
-    //     flex: 1,
-    //     alignItems: 'center',
-    //     justifyContent: 'flex-end',
-    //     paddingBottom: 50,
-    //   },
-
-  });
-
+  })
