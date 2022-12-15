@@ -150,6 +150,45 @@ return (
 */
 
   return (
+    <View style={styles.mainContainer}>
+    <View style={styles.topContainer}>
+      <View style={styles.rowContainer}>
+        <SearchBar 
+          lightTheme
+          searchIcon={{ size: 24 }}
+          showCancel
+          containerStyle={{backgroundColor: 'white', width: 300, heigth: 10, justifyContent: 'center', borderWidth: 0, borderRadius: 10}}
+          placeholder="Indiquez votre ville..."
+          onChangeText={updateSearch}
+          value={search}
+          >
+        </SearchBar>
+        <TouchableOpacity >
+          <Icon name='bars' size={40} color='#475059' style={styles.menuIcon}/>
+        </TouchableOpacity>
+      </View>
+    <MapView 
+      Type="hybrid" style={styles.map} title="My location" pinColor='#FED579'
+      showsUserLocation={true}
+      followsUserLocation={true}
+      >
+      {/* <Marker coordinate={location} title="My position" pinColor="#fecb2d" />*/}     
+    </MapView>   
+  </View>   
+  <View style={styles.bottomContainer}> 
+    <View style={styles.tipsList}>
+      <Image source={require('../assets/avatar.png')}  style={styles.avatar} /> 
+      <Text style={styles.title}> Titre </Text>
+      <Text style={styles.place}> Lieu </Text>
+      <Text style={styles.content}> Premières lignes du descriptyps</Text>  
+    </View>
+  </View>
+</View>
+
+)};
+
+/* Init Senda
+ return (
   <View style={styles.mainContainer}>
 
   <View style={styles.topContainer}>
@@ -203,9 +242,8 @@ return (
 
   </View>
 
-  )};
-
-
+)};
+*/
 
 const styles = StyleSheet.create({
 
