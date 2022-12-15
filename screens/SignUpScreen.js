@@ -29,8 +29,8 @@ export default function SignUpScreen ({ navigation }) {
       .then(response => response.json())
       .then(dataDb => {
         // ON AJOUTE UNE CLE ISSELECTED A CHACUNE DES CATEGORIES
-        const formattedCategories = dataDb.data.map((categorie) => {
-          return {...categorie, isSelected: false}
+        const formattedCategories = dataDb.data.map((categorie, i) => {
+          return {...categorie, isSelected: false, key:{i}}
         })
         // ON STOCKE CE NOUVEAU TABLEAU DANS UN STATE
         setEnvie(formattedCategories)
@@ -121,7 +121,7 @@ const handleRegister = () => {
                 setSignUpEmail('');
                 setSignUpPassword('');
                 setSignUpInscriptionDate('');
-                navigation.navigate('Home');
+                navigation.navigate('TabNavigator'); // <------------------------------------------------
             }
         });
 };
@@ -145,6 +145,7 @@ const pickImage = async () => {
     setImage(result.assets[0].uri);
     console.log('uri détectée',result.assets[0].uri)
   }
+  console.log('image',image);
 };
 
 return(
@@ -169,8 +170,8 @@ return(
             </TouchableOpacity>    
         </View>
         <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-            <FontAwesome name='circle-thin' size={150} color="#adebf6"  />
+            <TouchableOpacity onPress={() => navigation.navigate('TabNavigator')}>
+            <FontAwesome name='circle-thin' size={150} color="#d6f5fa"  />
             </TouchableOpacity>
         </View>
          <Modal visible={modalVisible} animationType="fade" transparent>

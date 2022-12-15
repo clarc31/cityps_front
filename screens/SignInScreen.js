@@ -15,7 +15,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 
-export default function SignInScreen({ navigation }) {
+export default function SignInScreen({ navigation }) { 
 	// const dispatch = useDispatch();
 
 // const [signInEmail, setSignInEmail] = useState('');
@@ -52,7 +52,7 @@ return (
             <TextInput onChangeText={(value) => setSignInPassword(value)}  style={styles.inputPassword} placeholder="  Password" />
         </View>
         <View style={styles.containerButton}>
-        <FontAwesome name='circle-thin' size={150} color="#adebf6"  onPress={() => navigation.navigate('Home')} />
+        <FontAwesome name='circle-thin' size={150} color="#d6f5fa"  onPress={() => navigation.navigate('TabNavigator')} />
         </View>
     </View>
 )
