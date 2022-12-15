@@ -15,12 +15,14 @@ import { useState, useEffect } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { CheckBox } from 'react-native-elements';
 
+import * as ImagePicker from 'expo-image-picker';
+
 const BACKEND = 'https://cityps-back.vercel.app';
 
 export default function SignUpScreen ({ navigation }) { 
   const [envie, setEnvie] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  
+  const [image, setImage] = useState(null);
     
     useEffect (() =>{
       fetch(`${BACKEND}/categories`)
@@ -124,13 +126,26 @@ const handleRegister = () => {
         });
 };
 
-
-
-
 const handleSubmit = () => {
     setModalVisible(true);
 }
   
+const pickImage = async () => {
+  // No permissions request is necessary for launching the image library
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: false,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  console.log(result);
+
+  if (!result.canceled) {
+    setImage(result.assets[0].uri);
+    console.log('uri détectée',result.assets[0].uri)
+  }
+};
 
 return(
     < KeyboardAvoidingView style={styles.mainContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} enabled = {false}>
@@ -149,9 +164,9 @@ return(
                 <TextInput placeholder="  Pseudo" onChangeText={(value) => setSignUpPseudo(value)}  style={styles.input1} />
                 <TouchableOpacity onPress={() => handleSubmit()}  style={styles.button} activeOpacity={0.9}></TouchableOpacity>
             </View>
-            <View>
+            <TouchableOpacity onPress={() => pickImage()}>
                 <Image source={require('../assets/avatar.png')}  className={styles.avatar} />  
-            </View>    
+            </TouchableOpacity>    
         </View>
         <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('Home')}>
@@ -163,7 +178,7 @@ return(
                 <View style={styles.modal}>
                     {formatedData}
                 </View>
-                <TouchableOpacity onPress={() => handleClose()} style={styles.Button} activeOpacity={0.8}>
+            <TouchableOpacity onPress={() => handleClose()} style={styles.Button} activeOpacity={0.8}>
               <Text style={styles.textButton}>start</Text>
             </TouchableOpacity>
             </View>
