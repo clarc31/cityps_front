@@ -151,9 +151,13 @@ return (
 
   return (
     <View style={styles.mainContainer}>
-    <View style={styles.topContainer}>
+   {/* <View style={styles.topContainer}>*/}
       <View style={styles.rowContainer}>
+<<<<<<< HEAD
         {/* <SearchBar 
+=======
+        {/*<SearchBar 
+>>>>>>> front16
           lightTheme
           searchIcon={{ size: 24 }}
           showCancel
@@ -162,11 +166,15 @@ return (
           onChangeText={updateSearch}
           value={search}
           >
+<<<<<<< HEAD
         </SearchBar> */}
+=======
+  </SearchBar>*/}
+>>>>>>> front16
         <TouchableOpacity >
           <Icon name='bars' size={40} color='#475059' style={styles.menuIcon}/>
         </TouchableOpacity>
-      </View>
+      {/*  </View>*/}
     <MapView 
       Type="hybrid" style={styles.map} title="My location" pinColor='#FED579'
       showsUserLocation={true}
@@ -175,14 +183,14 @@ return (
       {/* <Marker coordinate={location} title="My position" pinColor="#fecb2d" />*/}     
     </MapView>   
   </View>   
-  <View style={styles.bottomContainer}> 
+ {/* <View style={styles.bottomContainer}> 
     <View style={styles.tipsList}>
       <Image source={require('../assets/avatar.png')}  style={styles.avatar} /> 
       <Text style={styles.title}> Titre </Text>
       <Text style={styles.place}> Lieu </Text>
       <Text style={styles.content}> Premières lignes du descriptyps</Text>  
-    </View>
-  </View>
+</View>
+  </View>*/}
 </View>
 
 )};
@@ -250,7 +258,8 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',  
+    justifyContent: 'center', 
+    backgroundColor:"red", 
    margin: 0,
    padding: 0,
   },
@@ -267,10 +276,9 @@ const styles = StyleSheet.create({
   },*/
   
   rowContainer: {
+    height:"100%",
   flexDirection :'row',
   justifyContent: 'space-around',
-  //position: 'relative',
-  top: 50, 
   },
 
   searchBar: {
@@ -283,8 +291,7 @@ const styles = StyleSheet.create({
   },
 
   map: {
-      flex: 1.2,
-      marginTop: 0,
+      flex: 1,
       //position: 'relative',
     },
    
