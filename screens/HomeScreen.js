@@ -153,7 +153,7 @@ return (
     <View style={styles.mainContainer}>
     <View style={styles.topContainer}>
       <View style={styles.rowContainer}>
-        <SearchBar 
+        {/* <SearchBar 
           lightTheme
           searchIcon={{ size: 24 }}
           showCancel
@@ -162,7 +162,7 @@ return (
           onChangeText={updateSearch}
           value={search}
           >
-        </SearchBar>
+        </SearchBar> */}
         <TouchableOpacity >
           <Icon name='bars' size={40} color='#475059' style={styles.menuIcon}/>
         </TouchableOpacity>

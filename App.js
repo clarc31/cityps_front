@@ -44,7 +44,7 @@ const TabNavigator = () => {
       tabBarInactiveTintColor: '#475059',
       tabBarBackgroundColor: '#77D0DE',
       
-    })} initialRouteName="Home">
+    })} initialRouteName="Découvrir">
       <Tab.Screen name="Mes albums" component={DisplayUserAlbumScreen} />
       <Tab.Screen name="Découvrir" component={HomeScreen} />
       <Tab.Screen name="Postyps" component={NewPostScreen} />

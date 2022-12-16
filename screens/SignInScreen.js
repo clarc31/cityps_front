@@ -1,7 +1,7 @@
 // import { useEffect, useState } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 // import { login, logout } from '../reducers/user';
-// import React, { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   StyleSheet,
@@ -18,12 +18,13 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 export default function SignInScreen({ navigation }) { 
 	// const dispatch = useDispatch();
 
-// const [signInEmail, setSignInEmail] = useState('');
-// const [signInPassword, setSignInPassword] = useState('');
+const [signInEmail, setSignInEmail] = useState('');
+const [signInPassword, setSignInPassword] = useState('');
+const BACKEND = 'https://cityps-back.vercel.app';
+// const BACKEND = 'http://192.168.142.41:3000';
 
 const handleConnection = () => {
-
-    fetch('http://localhost:3000/users/signin', {
+    fetch(`${BACKEND}/users/signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: signInEmail, password: signInPassword }),
@@ -32,9 +33,9 @@ const handleConnection = () => {
             if (data.result) {
                 console.log(data);
                 // dispatch(login({ email: signInEmail, token: data.token }));
-                // setSignInEmail('');
-                // setSignInPassword('');
-               
+                setSignInEmail('');
+                setSignInPassword('');
+               navigation.navigate('TabNavigator');
             }
         });
 };
@@ -52,7 +53,7 @@ return (
             <TextInput onChangeText={(value) => setSignInPassword(value)}  style={styles.inputPassword} placeholder="  Password" />
         </View>
         <View style={styles.containerButton}>
-        <FontAwesome name='circle-thin' size={150} color="#d6f5fa"  onPress={() => navigation.navigate('TabNavigator')} />
+        <FontAwesome name='circle-thin' size={150} color="#d6f5fa"  onPress={() => handleConnection()} />
         </View>
     </View>
 )

@@ -17,14 +17,20 @@ import { CheckBox } from 'react-native-elements';
 
 import * as ImagePicker from 'expo-image-picker';
 
-// const BACKEND = 'https://cityps-back.vercel.app';
-const BACKEND = 'http://192.168.142.41:3000';
+const BACKEND = 'https://cityps-back.vercel.app';
+// const BACKEND = 'http://192.168.142.41:3000';
 
 export default function SignUpScreen ({ navigation }) { 
+  //-----------------------------------USESTATE-------------------------------------------------------------------------------------
   const [envie, setEnvie] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [image, setImage] = useState(null);
-    
+  const [signUpName, setSignUpName] = useState('');
+  const [signUpFirstName, setSignUpFirstname] = useState('');
+  const [signUpUserName, setSignUpUserName] = useState('');
+  const [signUpEmail, setSignUpEmail] = useState('');
+  const [signUpPassword, setSignUpPassword] = useState('');
+  //---------------------------------FETCH CATEGORIES-----------------------------------------------------------------------------  
     useEffect (() =>{
       fetch(`${BACKEND}/categories`)
       .then(response => response.json())
@@ -50,33 +56,19 @@ export default function SignUpScreen ({ navigation }) {
       })
       setEnvie(temp)
     }
-
-    
-
     // ON BOUCLE SUR LE TABLEAU DE CATEGORIES POUR CREER UNE CHECKBOX A CHAQUE CATEGORIE
     const formatedData = envie.map((el, i) =>{
         return (
-                <View style={styles.checkbox}>
+                <View style={styles.checkbox} key={i}>
                   <CheckBox  checked={el.isSelected} onPress={() => handleCheckbox(el._id)} style={styles.checkbox} />
-                  <Text key={i} style={styles.label}>
+                  <Text style={styles.label}>
                     {el.category}
                   </Text>
                 </View> 
         )
     })
-
-
-    // const dispatch = useDispatch();
-    // const user = useSelector((state) => state.user.value);
-
-    const [signUpName, setSignUpName] = useState('');
-    const [signUpFirstName, setSignUpFirstname] = useState('');
-    const [signUpUserName, setSignUpUserName] = useState('');
-    const [signUpEmail, setSignUpEmail] = useState('');
-    const [signUpPassword, setSignUpPassword] = useState('');
-
-    console.log(signUpFirstName)
-
+    // console.log(signUpFirstName)
+//-----------------------------------FUNCTION HANDLEREGISTER---------------------------------------------------------------------------
 const handleRegister = () => {
   const idsCategory = envie.map(category => {
     if(category.isSelected) {
@@ -84,15 +76,14 @@ const handleRegister = () => {
     }
     return;
   })
-
-  console.log("idsCategory", idsCategory)
-
+  // console.log("idsCategory", idsCategory)
   const idsCategoryFiltered = idsCategory.filter(category => category !== undefined)
 
-  console.log("idsCategoryFiltered", idsCategoryFiltered)
+  // console.log("idsCategoryFiltered", idsCategoryFiltered)
 
   const formData = new FormData();
-  formData.append('photoFromFront',{
+  
+  image && formData.append('photoFromFront',{
     uri: image,
     name: 'photo.jpg',
     type: 'image/jpeg',
@@ -103,13 +94,15 @@ const handleRegister = () => {
   formData.append("email", signUpEmail)
   formData.append("password", signUpPassword)
   formData.append("categories", idsCategoryFiltered)
-
+  console.log(signUpFirstName);
+  // console.log(formData)
+//------------------------------FETCH SIGNUP-----------------------------------------------------------------------------------
   fetch(`${BACKEND}/users/signup`, {
         method: 'POST',
         body: formData,
     }).then((response) => response.json())
     .then((data) => {
-      console.log('responseJson', data)
+      // console.log('responseJson', data)
     })
     // .then(response => response.json())
         // .then(data => {
@@ -128,7 +121,7 @@ const handleRegister = () => {
                 // setSignUpEmail('');
                 // setSignUpPassword('');
                 // setSignUpInscriptionDate('');
-                // navigation.navigate('Home');
+                navigation.navigate('TabNavigator');
         //     }
         // });
 };
@@ -150,7 +143,7 @@ const pickImage = async () => {
   if (!result.canceled) {
     setImage(result.assets[0].uri);
   }
-  console.log('image',image);
+  // console.log('image',image);
 };
 
 return(
@@ -168,7 +161,7 @@ return(
                 <TextInput placeholder="  Nom" onChangeText={(value) => setSignUpName(value)}  style={styles.input1} />
                 <TextInput placeholder="  Prenom" onChangeText={(value) => setSignUpFirstname(value)}  style={styles.input1} />
                 <TextInput placeholder="  Pseudo" onChangeText={(value) => setSignUpUserName(value)}  style={styles.input1} />
-                <TouchableOpacity onPress={() => handleSubmit()}  style={styles.button} activeOpacity={0.9}></TouchableOpacity>
+                <TouchableOpacity onPress={() => handleSubmit()}  style={styles.button} activeOpacity={0.9}><Text style={styles.buttonText}>envie</Text></TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => pickImage()}>
                 <Image source={require('../assets/avatar.png')}  className={styles.avatar} />  
@@ -231,8 +224,15 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'flex-start',
       },
+      buttonText:{
+        marginLeft: '45%',
+        fontSize: 20,
+        marginTop: '2%'
+      },
     avatar:{
-        
+        width: 4,
+        height: 4,
+        resizeMode: 'contain'
         // width: 100
       },
       inputContainer2:{
@@ -250,9 +250,11 @@ const styles = StyleSheet.create({
       },
       button:{
         backgroundColor: '#f77b55',
-        width: "90%",
-        height: "20%",
+        width: "150%",
+        height: "15%",
         borderRadius: 20,
+        marginTop: 10,
+        marginLeft: 10,
         // alignItems: 'center'
       },
       centeredView: {
