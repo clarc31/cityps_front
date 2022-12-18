@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { CheckBox } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
+import MapView, { Marker } from 'react-native-maps';
 import {
     StyleSheet,
     Text,
@@ -16,7 +17,7 @@ import {
 // const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
 const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian  
 
-  export default function NewPostScreen() {
+  export default function NewPostScreen({navigation}) {
     // states et setters
     const [title, setTitle] = useState ('');                   // Titre typs -> BDD
     const [coordonates, setCoordonates] = useState (null);     // Latitude, longitude du lieu onLongPressé -> BDD
@@ -24,7 +25,11 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
     const [category, setCategory] = useState ('');             // Id_Catégorie retenue pour le typs saisi -> BDD
     const [content, setContent] = useState ('');               // Saisie user de la description du typs -> BDD
     const [pictures, setPictures] = useState (['0']);          // 3 chemins vers galerie photo
-    const [modalVisible, setModalVisible] = useState(false);   // Affichage modale
+    const [modalVisible, setModalVisible] = useState(false);   // Affichage modale Catégories
+    const [mapModaVisible, setMapModaVisible] = useState(false); // Affichage modale Map
+    const [coordinatesTyps,setCoordinatesTyps] = useState(null); // Coordonnées du lieu du typs -> BDD
+    const [typsArea, setTypsArea] = useState(null);            // pour centrage map sur ville du typs 
+    const [cityps, setCityps] = useState('');                  // Ville typs pour recherche coord via API
 
     // ctrl states
     //console.log('categoriesData',categoriesData);
@@ -47,9 +52,37 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
 
     // ---------------------------------- onPress positionner sur la map ------------------------------
     const locOnMap = () => {
-      console.log('loc on map')
-    }
-
+      console.log('vers MapScreen')
+      setMapModaVisible(true);
+      //navigation.navigate('MapPostyps')
+    };
+    const handleLongPress = (e) => {
+      setCoordinatesTyps(e.nativeEvent.coordinate);
+      console.log('L59 coordinatesTyps',coordinatesTyps);
+      setMapModaVisible(false)
+   }
+   const searchCity = () => {
+    console.log('L63 searchCity')
+    // coordonnées de la ville via API
+    fetch(`https://api-adresse.data.gouv.fr/search/?q=${cityps}`)
+    .then((response) => response.json())
+    .then((data) => {
+      // rien ne se passe si la ville n'est pas trouvée via API
+      if (data.features.length === 0) {
+        return;
+      }
+      const coordCity = data.features[0];
+      const chosenCity = {
+        latitude: coordCity.geometry.coordinates[1],
+        longitude: coordCity.geometry.coordinates[0],
+      };
+      setCoordinatesTyps(chosenCity);
+      // coordonnées de la ville à afficher sur la map avec périmètre fixe
+      let citypsMap = { ...chosenCity, latitudeDelta:1, longitudeDelta:1};
+      setTypsArea(citypsMap);
+    });
+   }
+    // https://medium.com/geekculture/mapview-in-expo-react-native-5aa69eb81519
     // ------------------------------------ catégorie du typs : choix unique via modale ----------------------------------
     const chooseCategory = () => {
       setModalVisible(true);
@@ -69,7 +102,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
       })
       setCategoriesData(displaySelectedCategory);
     }
-    // ON BOUCLE SUR LE TABLEAU DE CATEGORIES POUR CREER UNE CHECKBOX A CHAQUE CATEGORIE
+    // on boucle sur le tableau de catégories pour créer une CHECKBOX pour chaque catégorie
     const formatedData = categoriesData.map((el, i) =>{
         return (
                 <View style={styles.checkbox} key={i}>
@@ -80,7 +113,6 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
                 </View> 
         )
     })
-
     const closeModal = () => {
       if (category !== '') {
         setModalVisible(false)
@@ -109,6 +141,11 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
         console.log('L109 pictures.length',pictures.length);
       }
     };
+    // --------- RESTE A FAIRE sur photos galerie -----------
+    // Modifier ou Supprimer photo 1, 2 ou 3
+    // Changer couleur icône qd une photo est sélectionnée
+    // Vérifier si accord RGPD nécessaire
+    // ------------------------------------------------------ 
       
     return (
       <View style={styles.mainContainer}>
@@ -138,6 +175,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
           multiline={true}
           maxLength={1000}
         />
+
         <Modal visible={modalVisible} animationType="fade" transparent>
           <View style={styles.centeredView}>
             <View style={styles.modal}>
@@ -147,6 +185,26 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
               <Text style={styles.textButton}>   Valider   </Text>
             </TouchableOpacity>
           </View>
+        </Modal>
+
+        <Modal visible={mapModaVisible} transparent style={styles.mapModal}> 
+          <View style={styles.header}>
+            <Text>Recherchez la ville ou celle la plus proche, affiner puis appuyer longuement</Text>
+            <View style={styles.chooseCity}>
+              <TextInput style={styles.inputText} onChangeText={(value) => setCityps(value)}> Rechercher la ville...</TextInput>
+              <FontAwesome name='map-pin' size={30} color="#f77b55"  onPress={() => searchCity()} style={styles.iconSearch}/>
+            </View>
+          </View>
+             
+          <MapView onLongPress={(e) => handleLongPress(e)} style={styles.mapModal}
+            initialRegion={{
+            latitude: 48,
+            longitude: 1.8,
+            latitudeDelta: 10,
+            longitudeDelta: 13,
+            }}
+            region={typsArea}>
+          </MapView>
         </Modal>
 
         <FontAwesome name='circle-thin' size={100} color="#adebf6"  onPress={() => handlepost()} style={styles.circleSubmit}/>
@@ -222,9 +280,10 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
       fontSize: 16,
     },
     circleSubmit: {
+      marginTop: "3%",
       marginLeft: "40%",
     },
-    // ----------------------------------------------- modale ---------------------------------------------
+    // ----------------------------------------------- modale Catégorie --------------------------------------------
     centeredView: {
       flex: 1,
       justifyContent: 'center',
@@ -261,7 +320,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
       marginTop: "3%",
       borderRadius: 10,
     },
-    // ------------------------------------------ modale style interne -------------------------------------------
+    // ------------------------------------------ modale Catégorie style interne -------------------------------------------
     checkbox:{
       flex: 1,
       justifyContent:'flex-start',
@@ -289,6 +348,31 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
     // },
     label: {
       margin: 8,
+    },
+    // ----------------------------------------- modale Map -----------------------------------------------
+    mapModal:{
+      flex:1,
+    },
+    chooseCity:{
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    header:{
+      height: '10%',
+      marginTop: '3%',
+      marginLeft: '3%',
+      marginRight: '3%',
+      backgroundColor: '#77d0de',
+    },
+    inputText:{
+      marginTop: '2%',
+      backgroundColor: '#d6f5fa',
+      width: '50%',
+      borderRadius: 10,
+    },
+    iconSearch:{
+      marginLeft: '6%',
     },
 
 

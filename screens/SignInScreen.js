@@ -59,7 +59,7 @@ navigation.navigate('TabNavigator')}
 return (
     <View style={styles.containerMain}>
         <View style={styles.containerImage}>
-            <Image source={require('../assets/logisignin.png')}/>
+            <Image style={styles.logo} source={require('../assets/logisignin.png')}/>
         </View>
         <View style={styles.containerSignIn}>
            <TouchableOpacity    onPress={() => navigation.navigate('SignUp')} style={styles.inputSignUp}><Text>  S'inscrire (c'est gratuit!)</Text></TouchableOpacity>
@@ -73,6 +73,76 @@ return (
     </View>
 )
 }
+
+const styles = StyleSheet.create({
+    containerMain:{
+        backgroundColor: "#77d0de",
+        flex: 1,
+        //width: '100%',
+        //alignItems: "center"
+    },
+    logo: { // NOUVEAU
+        height: 250,
+        width: 250,
+        resizeMode: 'contain',
+    },
+    containerImage:{
+        height: "28%",
+       // width: "100%",
+        alignItems: 'center',
+        marginTop: "20%"
+    },
+    TextInput:{
+        borderRadius: 10,
+    },
+    containerSignIn:{
+        height: "30%",
+        // backgroundColor: 'yellow',
+        justifyContent: 'space-between',
+        width: '100%',
+        // flex: 1,
+        alignItems: 'center',
+    },
+    containerButton:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingBottom: 50,
+    },
+    TouchableOpacity:{
+        // color: 'red',
+        // width: "100%"
+    },
+    inputSignUp:{
+        marginTop: "10%",
+        color: 'red',
+        width: "85%",
+        height: "15%",
+        borderRadius: 20,
+        backgroundColor: "#d6f5fa",
+        flex:0.33,
+        justifyContent: 'center',
+    },
+    inputEmail:{
+        width: "85%",
+        height: "15%",
+        borderRadius: 20,
+        backgroundColor: "#d6f5fa",
+    },
+    inputPassword:{
+        width: "85%",
+        height: "15%",
+        borderRadius: 20,
+        backgroundColor: "#d6f5fa"
+    },
+    TouchableOpacity:{
+        alignItems: 'center',
+    }
+
+})
+
+
+/* Ancien CSS
 const styles = StyleSheet.create({
     containerMain:{
         backgroundColor: "#77d0de",
@@ -132,3 +202,4 @@ const styles = StyleSheet.create({
     }
 
 })
+*/

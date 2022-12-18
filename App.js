@@ -42,7 +42,11 @@ const TabNavigator = () => {
       headerShown: false,
       tabBarActiveTintColor: '#F77B55',
       tabBarInactiveTintColor: '#475059',
-      tabBarBackgroundColor: '#77D0DE',
+      //activeBackgroundColor: '#77d0de', //tabBarBackgroundColor: '#77d0de'
+      tabBarStyle:{
+        backgroundColor: '#77d0de',
+      }
+      
       
     })} initialRouteName="Découvrir">
       <Tab.Screen name="Mes albums" component={DisplayUserAlbumScreen} />
@@ -51,19 +55,7 @@ const TabNavigator = () => {
     </Tab.Navigator>
   );
 };
-/*
-const ActionNavigator = () => {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="SignUp" component={SignUpScreen} />
-      <Stack.Screen name ="Home" component={HomeScreen} />
-      <Stack.Screen name = "DesCriptyp" component={DesCriptypScreen}/>
-      <Stack.Screen name = "DisplayUserAlbum" component={DisplayUserAlbumScreen}/>
-      <Stack.Screen name = "NewPost" component={NewPostScreen}/>
-    </Stack.Navigator>
-  )
-}
-*/
+
 export default function App() {
   
   return (
@@ -72,11 +64,11 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="SignIn">
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name ="Home" component={HomeScreen} />
-          <Stack.Screen name = "DesCriptyp" component={DesCriptypScreen}/>
-          <Stack.Screen name = "DisplayUserAlbum" component={DisplayUserAlbumScreen}/>
-          <Stack.Screen name = "NewPost" component={NewPostScreen}/>
-          <Stack.Screen name='SignIn'component={SignInScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="DesCriptyp" component={DesCriptypScreen}/>
+          <Stack.Screen name="DisplayUserAlbum" component={DisplayUserAlbumScreen}/>
+          <Stack.Screen name="NewPost" component={NewPostScreen}/>
+          <Stack.Screen name="SignIn"component={SignInScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
