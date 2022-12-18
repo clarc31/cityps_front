@@ -17,8 +17,9 @@ import { CheckBox } from 'react-native-elements';
 
 import * as ImagePicker from 'expo-image-picker';
 
-const BACKEND = 'https://cityps-back.vercel.app';
-// const BACKEND = 'http://192.168.142.41:3000';
+// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
+const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
 
 export default function SignUpScreen ({ navigation }) { 
   //-----------------------------------USESTATE-------------------------------------------------------------------------------------
@@ -172,16 +173,18 @@ return(
             <FontAwesome name='circle-thin' size={150} color="#adebf6"  />
             </TouchableOpacity>
         </View>
-         <Modal visible={modalVisible} animationType="fade" transparent>
-            <View style={styles.centeredView}>
-                <View style={styles.modal}>
-                    {formatedData}
-                </View>
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.Button} activeOpacity={0.8}>
-              <Text style={styles.textButton}>start</Text>
-            </TouchableOpacity>
-            </View>
+
+        <Modal visible={modalVisible} animationType="fade" transparent>
+           <View style={styles.centeredView}>
+             <View style={styles.modal}>
+               {formatedData}
+             </View>
+             <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.Button} activeOpacity={0.8}>
+               <Text style={styles.textButton}>start</Text>
+             </TouchableOpacity>
+           </View>
          </Modal>
+         
     </KeyboardAvoidingView>
 )}
 

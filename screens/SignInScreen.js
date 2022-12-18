@@ -20,16 +20,31 @@ export default function SignInScreen({ navigation }) {
 
 const [signInEmail, setSignInEmail] = useState('');
 const [signInPassword, setSignInPassword] = useState('');
-const BACKEND = 'https://cityps-back.vercel.app';
-// const BACKEND = 'http://192.168.142.41:3000';
+// ctrl states
+console.log('signInEmail',signInEmail);
+console.log('signInPassword',signInPassword);
+
+// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
+const BACKEND = 'http://192.168.1.8:3000'; // Local Christian 
 
 const handleConnection = () => {
+// Route signin neutralisée car ne marche pas
+// retirer ligne suivante et lire ligne 40 
+navigation.navigate('TabNavigator')} 
+
+    console.log('entrée click');
+    console.log('signInEmail2',signInEmail);
+    console.log('signInPassword2',signInPassword);
+
+/* RETIRER COMMENTAIRE POUR REACTIVER FETCH VERS BE
     fetch(`${BACKEND}/users/signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: signInEmail, password: signInPassword }),
     }).then(response => response.json())
         .then(data => {
+            console.log('Retour du BE', data)
             if (data.result) {
                 console.log(data);
                 // dispatch(login({ email: signInEmail, token: data.token }));
@@ -39,7 +54,7 @@ const handleConnection = () => {
             }
         });
 };
-
+*/
 
 return (
     <View style={styles.containerMain}>

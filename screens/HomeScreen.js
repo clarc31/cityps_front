@@ -153,9 +153,9 @@ return (
     <View style={styles.mainContainer}>
    {/* <View style={styles.topContainer}>*/}
       <View style={styles.rowContainer}>
-<<<<<<< HEAD
+
         {/* <SearchBar 
-=======
+
         {/*<SearchBar 
 >>>>>>> front16
           lightTheme
@@ -166,11 +166,11 @@ return (
           onChangeText={updateSearch}
           value={search}
           >
-<<<<<<< HEAD
+
         </SearchBar> */}
-=======
-  </SearchBar>*/}
->>>>>>> front16
+
+
+
         <TouchableOpacity >
           <Icon name='bars' size={40} color='#475059' style={styles.menuIcon}/>
         </TouchableOpacity>
