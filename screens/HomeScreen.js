@@ -22,9 +22,9 @@ export default function HomeScreen({ navigation }) {
     const [location, setLocation] = useState({});
     console.log(location)
   
-    useEffect(() => {
-      (async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
+useEffect(() => {
+  (async () => {
+    const { status } = await Location.requestForegroundPermissionsAsync();
   
         if (status === 'granted') {
           // Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High},
@@ -61,9 +61,8 @@ latitude: city.geometry.coordinates[1],
 longitude: city.geometry.coordinates[0],
 };
 
-
 1st request: get geographic data from API
-fetch(`https://api-adresse.data.gouv.fr/search/?q=${city}`)
+fetch(https://api-adresse.data.gouv.fr/search/?q=${city})
 .then((response) => response.json())
 .then((data) => {
 
@@ -73,7 +72,7 @@ fetch(`https://api-adresse.data.gouv.fr/search/?q=${city}`)
   if (data.features.length === 0) {
     return;
   }
-  
+
 // b) A city is found by API:
   if (data.features.length > 0) {
     city.filter((city) => {
@@ -91,7 +90,7 @@ const selectedTipsForThisUser = () => {
 => Créer une route GET existingTipsbyCity (qui affiche tous les tips dispo sur l'appli toutes categories confondues)
 
 useEffect(() => {
-    fetch(`http://localhost:3000/tips/:cityname`)
+    fetch(http://localhost:3000/tips/:cityname)
       .then(response => response.json())
       .then((data) => {
         data.result && dispatch(addTiptoSelection(data.tips));
@@ -102,7 +101,7 @@ addTiptoSelection est un reducer (un tableau)
 
 => Créer une route GET selectedCategorieByUSer (qui affiche les categories selectionnées par le user)
 useEffect(() => {
-    fetch(`http://localhost:3000/user/:categories`)
+    fetch(http://localhost:3000/user/:categories)
       .then(response => response.json())
       .then((data) => {
         data.result && dispatch(addCategoriestoSelection(data.user);
@@ -119,17 +118,16 @@ return (
         <Image source={require('../assets/avatar.png')}  style={styles.avatar} />  {/* {user.avatar} */}
         <Text style={styles.title}> {tips.title} </Text>
         <Text style={styles.place}> {tips.city} </Text>
-        <Text style={styles.content}> {tips.description} </Text>     
+        <Text style={styles.content}> {tips.description} </Text>
     </View>
     );
 };
-
 
 // markers:
 
 /*  
   const otherTipsforThisCity = [existingTipsbyCity-selectedTipsForThisUser].match(searchCity);
-  
+
   const orangeMarkers = existingTipsForThisUser.map((data, i) => {
     return <><Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
   });
@@ -139,7 +137,7 @@ return (
   });
 
   useEffect(() => {
-    fetch(`http://localhost:3000/tips/:cityname`)
+    fetch(http://localhost:3000/tips/:cityname)
       .then(response => response.json())
       .then((data) => {
         data.result && dispatch(addMarkers({orangeMarkers + blackMarkers});
@@ -258,7 +256,7 @@ const styles = StyleSheet.create({
   searchBar: {
   width: '80%',
   },
-  
+
   menuIcon: {
     flexDirection :'column',
     justifyContent: 'center',
@@ -267,7 +265,7 @@ const styles = StyleSheet.create({
  map: {
     flex: 1,
     },
-   
+
   bottomContainer: {
     // height: '100%',
     // padding: 0,

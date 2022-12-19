@@ -18,8 +18,8 @@ import { CheckBox } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 
 // const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
-// const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
-const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
+const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
+// const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
 
 export default function SignUpScreen ({ navigation }) { 
   //-----------------------------------USESTATE-------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ const handleRegister = () => {
         body: formData,
     }).then((response) => response.json())
     .then((data) => {
-      // console.log('responseJson', data)
+      console.log('responseJson', data)
     })
     // .then(response => response.json())
         // .then(data => {
@@ -122,7 +122,7 @@ const handleRegister = () => {
                 // setSignUpEmail('');
                 // setSignUpPassword('');
                 // setSignUpInscriptionDate('');
-                navigation.navigate('TabNavigator');
+                // navigation.navigate('TabNavigator');
         //     }
         // });
 };
