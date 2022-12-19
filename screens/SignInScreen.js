@@ -21,23 +21,23 @@ export default function SignInScreen({ navigation }) {
 const [signInEmail, setSignInEmail] = useState('');
 const [signInPassword, setSignInPassword] = useState('');
 // ctrl states
-console.log('signInEmail',signInEmail);
-console.log('signInPassword',signInPassword);
+// console.log('signInEmail',signInEmail);
+// console.log('signInPassword',signInPassword);
 
 // const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
-// const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
-const BACKEND = 'http://192.168.1.8:3000'; // Local Christian 
+const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
+// const BACKEND = 'http://192.168.1.8:3000'; // Local Christian 
 
 const handleConnection = () => {
 // Route signin neutralisée car ne marche pas
 // retirer ligne suivante et lire ligne 40 
-navigation.navigate('TabNavigator')} 
+// navigation.navigate('TabNavigator')
 
-    console.log('entrée click');
-    console.log('signInEmail2',signInEmail);
-    console.log('signInPassword2',signInPassword);
+    // console.log('entrée click');
+    // console.log('signInEmail2',signInEmail);
+    // console.log('signInPassword2',signInPassword);
 
-/* RETIRER COMMENTAIRE POUR REACTIVER FETCH VERS BE
+// RETIRER COMMENTAIRE POUR REACTIVER FETCH VERS BE
     fetch(`${BACKEND}/users/signin`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -54,7 +54,7 @@ navigation.navigate('TabNavigator')}
             }
         });
 };
-*/
+
 
 return (
     <View style={styles.containerMain}>
