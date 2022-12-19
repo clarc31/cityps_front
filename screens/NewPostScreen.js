@@ -50,7 +50,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
       });
     },[]);
 
-    // ---------------------------------- onPress positionner sur la map ------------------------------
+    // ---------------------------------- positionnement de la ville du typs sur la map ------------------------------
     const locOnMap = () => {
       console.log('vers MapScreen')
       setMapModaVisible(true);
@@ -63,7 +63,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
    }
    const searchCity = () => {
     console.log('L63 searchCity')
-    // coordonnées de la ville via API
+    // coordonnées de la ville via API https://medium.com/geekculture/mapview-in-expo-react-native-5aa69eb81519
     fetch(`https://api-adresse.data.gouv.fr/search/?q=${cityps}`)
     .then((response) => response.json())
     .then((data) => {
@@ -78,11 +78,15 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
       };
       setCoordinatesTyps(chosenCity);
       // coordonnées de la ville à afficher sur la map avec périmètre fixe
-      let citypsMap = { ...chosenCity, latitudeDelta:1, longitudeDelta:1};
+      let citypsMap = { ...chosenCity, latitudeDelta:0.1, longitudeDelta:0.1};
       setTypsArea(citypsMap);
     });
    }
-    // https://medium.com/geekculture/mapview-in-expo-react-native-5aa69eb81519
+   
+   const coordCityValidation = () => {
+    console.log('L87 validation coord city')
+   }
+    
     // ------------------------------------ catégorie du typs : choix unique via modale ----------------------------------
     const chooseCategory = () => {
       setModalVisible(true);
@@ -191,11 +195,10 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
           <View style={styles.header}>
             <Text>Recherchez la ville ou celle la plus proche, affiner puis appuyer longuement</Text>
             <View style={styles.chooseCity}>
-              <TextInput style={styles.inputText} onChangeText={(value) => setCityps(value)}> Rechercher la ville...</TextInput>
+              <TextInput style={styles.inputText} onChangeText={(value) => setCityps(value)} placeholder='Rechercher la ville'/>
               <FontAwesome name='map-pin' size={30} color="#f77b55"  onPress={() => searchCity()} style={styles.iconSearch}/>
             </View>
           </View>
-             
           <MapView onLongPress={(e) => handleLongPress(e)} style={styles.mapModal}
             initialRegion={{
             latitude: 48,
@@ -205,6 +208,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
             }}
             region={typsArea}>
           </MapView>
+          <FontAwesome name='circle-thin' size={100} color="#adebf6"  onPress={() => coordCityValidation()} style={styles.mapSubmit}/>
         </Modal>
 
         <FontAwesome name='circle-thin' size={100} color="#adebf6"  onPress={() => handlepost()} style={styles.circleSubmit}/>
@@ -373,6 +377,11 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
     },
     iconSearch:{
       marginLeft: '6%',
+    },
+    mapSubmit:{
+      backgroundColor: '#77d0de',
+      marginLeft: '39%',
+      marginBottom:'10%',
     },
 
 
