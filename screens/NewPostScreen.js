@@ -11,6 +11,7 @@ import {
     TextInput,
     TouchableOpacity,
     Modal,
+    KeyboardAvoidingView,
     } from 'react-native';
 
 
@@ -191,7 +192,9 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
           </View>
         </Modal>
 
+        
         <Modal visible={mapModaVisible} transparent style={styles.mapModal}> 
+        
           <View style={styles.header}>
             <Text>Recherchez la ville ou celle la plus proche, affiner puis appuyer longuement</Text>
             <View style={styles.chooseCity}>
@@ -207,9 +210,12 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
             longitudeDelta: 13,
             }}
             region={typsArea}>
+            {coordinatesTyps && <Marker coordinate={coordinatesTyps} title="My position" pinColor="#fecb2d" />}
           </MapView>
-          <FontAwesome name='circle-thin' size={100} color="#adebf6"  onPress={() => coordCityValidation()} style={styles.mapSubmit}/>
+          <FontAwesome name='circle-thin' size={100} color="#f77b55"  onPress={() => coordCityValidation()} style={styles.mapSubmitBtn}/>
+        
         </Modal>
+        
 
         <FontAwesome name='circle-thin' size={100} color="#adebf6"  onPress={() => handlepost()} style={styles.circleSubmit}/>
 
@@ -378,10 +384,11 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
     iconSearch:{
       marginLeft: '6%',
     },
-    mapSubmit:{
+    mapSubmitBtn:{
       backgroundColor: '#77d0de',
       marginLeft: '39%',
-      marginBottom:'10%',
+      marginBottom:'11%',
+      
     },
 
 
