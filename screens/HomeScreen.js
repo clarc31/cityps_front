@@ -206,7 +206,7 @@ return (
         }}
         region={location}
         >
-        <Marker coordinate={location} title="My position" pinColor="#fecb2d" />
+        {location && <Marker coordinate={location} title="My position" pinColor="#fecb2d" />}
       </MapView>
     </View>  
 

@@ -16,21 +16,20 @@ import {
 
 
 // const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
-const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian  
+const BACKEND = 'http://192.168.43.162:3000'; // Local Christian  
 
   export default function NewPostScreen({navigation}) {
     // states et setters
     const [title, setTitle] = useState ('');                   // Titre typs -> BDD
-    const [coordonates, setCoordonates] = useState (null);     // Latitude, longitude du lieu onLongPressé -> BDD
     const [categoriesData, setCategoriesData] = useState ([]); // Ttes les catégories possibles pour typs
     const [category, setCategory] = useState ('');             // Id_Catégorie retenue pour le typs saisi -> BDD
     const [content, setContent] = useState ('');               // Saisie user de la description du typs -> BDD
     const [pictures, setPictures] = useState (['0']);          // 3 chemins vers galerie photo
     const [modalVisible, setModalVisible] = useState(false);   // Affichage modale Catégories
     const [mapModaVisible, setMapModaVisible] = useState(false); // Affichage modale Map
-    const [coordinatesTyps,setCoordinatesTyps] = useState(null); // Coordonnées du lieu du typs -> BDD
+    const [coordinates,setCoordinates] = useState(null);       // Coordonnées lat & long du lieu du typs -> BDD
     const [typsArea, setTypsArea] = useState(null);            // pour centrage map sur ville du typs 
-    const [cityps, setCityps] = useState('');                  // Ville typs pour recherche coord via API
+    const [city, setCity] = useState('');                      // Ville typs pour recherche coord via API et -> BDD
 
     // ctrl states
     //console.log('categoriesData',categoriesData);
@@ -58,14 +57,14 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
       //navigation.navigate('MapPostyps')
     };
     const handleLongPress = (e) => {
-      setCoordinatesTyps(e.nativeEvent.coordinate);
-      console.log('L59 coordinatesTyps',coordinatesTyps);
+      setCoordinates(e.nativeEvent.coordinate);
+      console.log('L59 coordinatesTyps',coordinates);
       setMapModaVisible(false)
    }
    const searchCity = () => {
     console.log('L63 searchCity')
     // coordonnées de la ville via API https://medium.com/geekculture/mapview-in-expo-react-native-5aa69eb81519
-    fetch(`https://api-adresse.data.gouv.fr/search/?q=${cityps}`)
+    fetch(`https://api-adresse.data.gouv.fr/search/?q=${city}`)
     .then((response) => response.json())
     .then((data) => {
       // rien ne se passe si la ville n'est pas trouvée via API
@@ -77,7 +76,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
         latitude: coordCity.geometry.coordinates[1],
         longitude: coordCity.geometry.coordinates[0],
       };
-      setCoordinatesTyps(chosenCity);
+      setCoordinates(chosenCity);
       // coordonnées de la ville à afficher sur la map avec périmètre fixe
       let citypsMap = { ...chosenCity, latitudeDelta:0.1, longitudeDelta:0.1};
       setTypsArea(citypsMap);
@@ -142,8 +141,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
         return 
         })
         setPictures(pictures)
-        console.log('L108 pictures', pictures)
-        console.log('L109 pictures.length',pictures.length);
+
       }
     };
     // --------- RESTE A FAIRE sur photos galerie -----------
@@ -151,7 +149,47 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
     // Changer couleur icône qd une photo est sélectionnée
     // Vérifier si accord RGPD nécessaire
     // ------------------------------------------------------ 
+    
+    // ------------------------------------------- envoi vers BE ----------------------------------------------------
+    const handlepost = () => {
+      const Id_Leviator = '639dd2e113fe1d637f7215a8';
+      console.log('title',title);
+      console.log('city',city);
+      console.log('content',content);
+      console.log('pictures',pictures);
+      console.log('author >> récup l\'Id du store',Id_Leviator); 
+      console.log('category',category);
+      console.log('coordinates',coordinates);
+
+      const formData = new FormData();
       
+      pictures && formData.append('photoFromFront',{
+        uri: pictures,
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+      });
+      formData.append('title', title)
+      formData.append("city", city)
+      formData.append("content", content)
+      formData.append("author", Id_Leviator) // RECUPERER L'ID DU USER DS LE STORE A LA CONNEXION
+      formData.append("category", category)
+      formData.append("coordinates", coordinates)
+
+      console.log(formData)
+
+    //-fetch route typs - POST
+      fetch(`${BACKEND}/typs`, {
+            method: 'POST',
+            body: formData,
+        }).then((response) => response.json())
+        .then((data) => {
+          console.log('responseJson', data)
+        })
+      
+
+
+    }
+
     return (
       <View style={styles.mainContainer}>
         <Image source={require('../assets/postyps.png')} style={styles.postyps} />
@@ -198,8 +236,8 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
           <View style={styles.header}>
             <Text>Recherchez la ville ou celle la plus proche, affiner puis appuyer longuement</Text>
             <View style={styles.chooseCity}>
-              <TextInput style={styles.inputText} onChangeText={(value) => setCityps(value)} placeholder='Rechercher la ville'/>
-              <FontAwesome name='map-pin' size={30} color="#f77b55"  onPress={() => searchCity()} style={styles.iconSearch}/>
+              <TextInput style={styles.inputText} onChangeText={(value) => setCity(value)} placeholder='Rechercher la ville'/>
+              <FontAwesome name='search' size={30} color="#f77b55"  onPress={() => searchCity()} style={styles.iconSearch}/>
             </View>
           </View>
           <MapView onLongPress={(e) => handleLongPress(e)} style={styles.mapModal}
@@ -210,7 +248,7 @@ const BACKEND = 'http:////192.168.1.8:3000'; // Local Christian
             longitudeDelta: 13,
             }}
             region={typsArea}>
-            {coordinatesTyps && <Marker coordinate={coordinatesTyps} title="My position" pinColor="#fecb2d" />}
+            {coordinates && <Marker coordinate={coordinates} title="My position" pinColor="#fecb2d" />}
           </MapView>
           <FontAwesome name='circle-thin' size={100} color="#f77b55"  onPress={() => coordCityValidation()} style={styles.mapSubmitBtn}/>
         
