@@ -19,8 +19,7 @@ export default function HomeScreen({ navigation }) {
 
 // géolocalisation (carte d'accueil du user):
 
-    const [location, setLocation] = useState({});
-    console.log(location)
+    const [location, setLocation] = useState(null); // compatibilté Android - info Zouhair
   
 useEffect(() => {
   (async () => {
