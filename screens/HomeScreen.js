@@ -19,8 +19,7 @@ export default function HomeScreen({ navigation }) {
 
 // géolocalisation (carte d'accueil du user):
 
-    const [location, setLocation] = useState({});
-    console.log(location)
+    const [location, setLocation] = useState(null);
   
 useEffect(() => {
   (async () => {
@@ -31,7 +30,7 @@ useEffect(() => {
           Location.watchPositionAsync({ distanceInterval: 10 },
             (location) => {
               console.log("location", location)
-              setLocation({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
+              setLocation({latitude : location.coords.latitude, longitude: location.coords.longitude,latitudeDelta: 0.08,longitudeDelta:0.08 });
               
             });
         }
@@ -149,7 +148,7 @@ return (
 
    const scrollTest = []
    for(let i = 0; i < 10; i++) {
-    scrollTest.push(     <View style={styles.tipsList} key={i}>
+    scrollTest.push(     <View style={styles.tipsList} key={i} >
       <Image source={require('../assets/avatar.png')}  style={styles.avatar} />
       <View style={styles.insideCardContainer}>
         <View style={styles.topCarte}>
@@ -207,7 +206,7 @@ return (
         }}
         region={location}
         >
-        <Marker coordinate={location} title="My position" pinColor="#fecb2d" />
+        {location && <Marker coordinate={location} title="My position" pinColor="#fecb2d" />}
       </MapView>
     </View>  
 
