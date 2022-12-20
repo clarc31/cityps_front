@@ -17,9 +17,9 @@ import { CheckBox } from 'react-native-elements';
 
 import * as ImagePicker from 'expo-image-picker';
 
-// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
 // const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
-const BACKEND = 'http://192.168.43.162:3000'; // Local Christian
+//const BACKEND = 'http://192.168.43.162:3000'; // Local Christian
 
 export default function SignUpScreen ({ navigation }) { 
   //-----------------------------------USESTATE-------------------------------------------------------------------------------------
