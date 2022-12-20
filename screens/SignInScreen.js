@@ -1,6 +1,6 @@
 // import { useEffect, useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { login, logout } from '../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from '../reducers/user';
 import React, { useState } from 'react';
 import {
   Image,
@@ -16,7 +16,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 export default function SignInScreen({ navigation }) { 
-	// const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
 const [signInEmail, setSignInEmail] = useState('');
 const [signInPassword, setSignInPassword] = useState('');
@@ -47,7 +47,7 @@ const handleConnection = () => {
             console.log('Retour du BE', data)
             if (data.result) {
                 console.log(data);
-                // dispatch(login({ email: signInEmail, token: data.token }));
+                dispatch(login({ email: signInEmail, token: data.token }));
                 setSignInEmail('');
                 setSignInPassword('');
                navigation.navigate('TabNavigator');
