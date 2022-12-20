@@ -28,11 +28,15 @@ export default function HomeScreen({ navigation }) {
   const [typs, setTyps] = useState([]); // pour le useEffect /typs/:city
 
 
-// MAP : SET USER GEOLOCALISATION AT INIT, SET TYPS :
+//-----------------------------------------------initialisation-----------------------------------------------------------
+
+
+// AT INIT : DISPLAY USER GEOLOCALISATION ON MAP AND SET ASSOCIATED TYPS :
   
 useEffect(() => {
   (async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
+
   // 1) DISPLAY USER GEOLOCALISATION ON HOMESCREENN MAP AT INIT :
         if (status === 'granted') {
           Location.watchPositionAsync({ distanceInterval: 10 },
@@ -44,29 +48,44 @@ useEffect(() => {
         }
       })();
 
-  // 2) on appelle la BDD pour afficher les typs :
+  // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
+
+  // => on va sur le site de l'API : https://adresse.data.gouv.fr/api-doc/adresse
+
+  /* on choisi : /reverse/ Point d’entrée pour le géocodage inverse.
+  consignes:
+    Les paramètres lat et lon sont obligatoires: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357"
+    Le paramètre type permet forcer le type de retour: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street"
+  */
+
+      fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${city.geometry.coordinates[0]}&lat=${city.geometry.coordinates[1]}`)
+      .then(response => response.json())
+  
+  // 3) on appelle la BDD pour afficher les typs :
+      .then((data) => {
       fetch(`http://localhost:3000/typs/:city`)
       .then(response => response.json())
       .then((data) => {
         data.result && setTyps(data);
       });
+      });
 
     }, []);
 
 
-// MANAGE THE SEARCH BAR, DISPLAY CITY AND ASSOCIATED TYPS:
+//------------------------------------------------Search bar---------------------------------------------------------
 
-// check if inputCity in the searchbar exist in API :  
+
+// SEARCH BAR : DISPLAY INPUTCITY ON MAP AND SET ASSOCIATED TYPS :
+
 function handleSearchBar () {
 
-// LOCATION OF THE inputCity ON MAP:
-
-// 1) request: get geographic data from API
+// 1) check if inputCity in the searchbar exists in API - request: get geographic data from API
 fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
 .then((response) => response.json())
 .then((data) => {
 
-// 2) create an if statement that will return the city that match what has been entered into the search bar:
+// 2) inputCity location on map : create an if statement that will return the city that match what has been entered into the search bar:
 
 // a) if no city is found by API, nothing is done :
   if (data.features.length === 0) {
@@ -85,54 +104,50 @@ fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
     });
   };
 
-  // SET TYPS ON MAP :
-
-  // on va sur le site de l'API : https://adresse.data.gouv.fr/api-doc/adresse
-
-  // on choisi : /reverse/ Point d’entrée pour le géocodage inverse.
-  // Les paramètres lat et lon sont obligatoires:
-  // "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357"
-
-  fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${city.geometry.coordinates[0]}&lat=${city.geometry.coordinates[1]}`)
-      .then(response => response.json())
-      .then((data) => {
-        data.result && setTyps(data);
-      });
-  // Le paramètre type permet forcer le type de retour:
-  // "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street"
 
 
+//------------------------------------------------------------------------------------------------------------------
 
-// SETUP OF THE TIPS LIST (scroll list):
 
+// ADD MARKERS ON MAP :
+
+/* 
+raisonnement : on fait un typs.map et une condition : id categories dans typs === id categories dans user:
+data = un typs dans le map 
+*/
+
+const addmarkers = typs.map((data, i) => {
+  if (userCategories.includes(data.category)) {
+  return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
+  } else {
+  return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#475059' /> </> 
+  }})
+
+  
+//------------------------------------------------------------------------------------------------------------------
+
+
+// DISPLAY THE TYPS LIST (scroll list):
 
 const scrollList = typs.map((data, i) => {
- return (     
-  <View style={styles.tipsList} key={i}>
-    <Image source={require(data.author.photo)}  style={styles.avatar} /> 
-    <View style={styles.insideCardContainer}>
-         <View style={styles.topCarte}>
-          <Text style={styles.title}> {data.title} </Text> 
-          <Text style={styles.place}> {data.city} </Text> 
-        </View>
-        <Text style={styles.descriptContent}> {data.content} </Text> 
-    </View>
-  </View>
-  )
-});
+  return (     
+   <View style={styles.typsList} key={i}>
+     <Image source={require(data.author.photo)}  style={styles.avatar} /> 
+     <View style={styles.insideCardContainer}>
+          <View style={styles.topCarte}>
+           <Text style={styles.title}> {data.title} </Text> 
+           <Text style={styles.place}> {data.city} </Text> 
+         </View>
+         <Text style={styles.descriptContent}> {data.content} </Text> 
+     </View>
+   </View>
+   )
+ });
+ 
+
+//---------------------------------------------Return--------------------------------------------------------
 
 
-
-// id categories dans typs = id categories dans user:
-// data = un typs dans le map
-  const addmarkers = typs.map((data, i) => {
-    if (userCategories.includes(data.category)) {
-    return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
-    } else {
-    return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#475059' /> </> 
-    }})
-  
-    
   return (
   <View style={styles.mainContainer}>
 
@@ -195,6 +210,8 @@ const scrollList = typs.map((data, i) => {
 }
 
 
+//---------------------------------------------Style--------------------------------------------------------
+
 const styles = StyleSheet.create({
 
   mainContainer: {
@@ -236,7 +253,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     backgroundColor: '#77D0DE',
   },
-  tipsList:  {
+  typsList:  {
     flexDirection: "row",
     borderRadius: 10,
     borderColor: "#F77B55",
