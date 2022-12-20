@@ -14,7 +14,6 @@ import {
   Image,
   TextInput,
   ScrollView,
-  Modal,
 } from 'react-native';
 
 export default function HomeScreen({ navigation }) {
@@ -23,7 +22,8 @@ export default function HomeScreen({ navigation }) {
   const [inputCity, setInputCity] = useState(null); // 2eme etape searchbar
   const [region, setRegion] = useState(null); // display on map 
 
-// display user geolocalisation on homeScreen map:
+
+// DISPLAY USER GEOLOCALISATION ON HOMESCREENN MAP :
   
 useEffect(() => {
   (async () => {
@@ -43,7 +43,7 @@ useEffect(() => {
 
 // MANAGE THE SEARCH BAR :
 
-// check if inputCityName in the searchbar exist in API :  
+// check if inputCity in the searchbar exist in API :  
 function handleSearchBar () {
 
 //request: get geographic data from API
@@ -70,11 +70,9 @@ fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
     });
   };
 
-// List of selected tips by catégories for this City for this user:
+// SETUP OF THE TIPS LIST (scroll list):
 
-// 1) setup of the tips list (scroll list):
-
-const scrollTest = []
+const scrollList = []
 for(let i = 0; i < 10; i++) {
  scrollTest.push(     
   <View style={styles.tipsList} key={i}>
@@ -90,33 +88,117 @@ for(let i = 0; i < 10; i++) {
   )
 };
 
-const selectedTipsForThisUser = () => {
+const importSelectedTipsForThisUser = () => {
 
   /*
-  => Créer une route GET existingTipsbyCity (qui affiche tous les tips dispo sur l'appli toutes categories confondues)
+  => 1) Créer une route GET "existingTipsbyCity" (qui affiche tous les tips dispo sur l'appli toutes categories confondues pour cette ville)
   
+  router.get("/tips/:city", (req, res) => {
+  Tip.find({ city: req.params.city }).then(data => {
+    res.json({ result: true, city: data });
+  });
+ });
+
+  importTipsByCity est un reducer TIPS (un tableau) 
+  
+  importTipsByCity : (state, action) => {
+  state.value.tips(action.payload); 
+  },
+
+  import { importTipsByCity } from '../reducers/tips';
+
+  Lire les informations du store pour pouvoir les afficher:
+  const tips = useSelector((state) => state.tips.value);
+
+  import { useDispatch, useSelector } from 'react-redux';
+  const dispatch = useDispatch();
+
   useEffect(() => {
-      fetch(`http://localhost:3000/tips/:cityname`)
+      fetch(`http://localhost:3000/tips/:city`)
         .then(response => response.json())
         .then((data) => {
-          data.result && dispatch(addTiptoSelection(data.tips));
+          data.result && dispatch(importTipsByCity(data.city);
         });
      }, []);
   
-  addTiptoSelection est un reducer (un tableau) 
+
+  Test à faire:
+  const markers = tips.city.map((data, i) => {
+    return <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} title={data.city} />;
+  });
+
+
+  => 2) Créer une route GET "existingTipsbyCategories" (qui affiche tous les tips dispo sur l'appli, classés par categorie)
   
-  => Créer une route GET selectedCategorieByUSer (qui affiche les categories selectionnées par le user)
+  router.get("/tips/:categories", (req, res) => {
+  Tip.find({ categories: req.params.categories }).then(data => {
+    res.json({ result: true, categories: data });
+  });
+  });
+
+  importTipsByCategories est un reducer TIPS (un tableau) 
+  
+  importTipsByCategories : (state, action) => {
+  state.value.tips(action.payload); 
+  },
+
+  import { importTipsByCategories } from '../reducers/tips';
+
+  Lire les informations du store pour pouvoir les afficher:
+  const tips = useSelector((state) => state.tips.value);
+
+  import { useDispatch, useSelector } from 'react-redux';
+  const dispatch = useDispatch();
+
+  UseDispatch : méthode chargée de l’envoi de l’ordre dans le reducer. 
+  Elle met à jour le store et déclenche les actions associées au reducer.
+
+  useEffect(() => {
+      fetch(`http://localhost:3000/tips/:categories`)
+        .then(response => response.json())
+        .then((data) => {
+          data.result && dispatch(importTipsByCategories(data.categories));
+        });
+     }, []);
+  
+
+  => 3) Créer une route GET "selectedCategoriesByUSer" (qui affiche uniquement les categories selectionnées par le user)
+  
+  router.get("/user/:categories", (req, res) => {
+  User.find({ categories: req.params.categories }).then(data => {
+    res.json({ result: true, categories: data });
+  });
+  });
+
+  importUserCategories est un reducer USER (un tableau)
+
+  importUserCategories : (state, action) => {
+  state.value.categories(action.payload); 
+  },
+  
+  import { importUserCategorie } from '../reducers/users';
+
+  Lire les informations du store pour pouvoir les afficher:
+  const users = useSelector((state) => state.users.value);
+
+  import { useDispatch, useSelector } from 'react-redux';
+  const dispatch = useDispatch();
+
   useEffect(() => {
       fetch(`http://localhost:3000/user/:categories`)
         .then(response => response.json())
         .then((data) => {
-          data.result && dispatch(addCategoriestoSelection(data.user);
+          data.result && dispatch(importUserCategories(data.user);
         });
      }, []);
   
-  addCategoriestoSelection est un reducer (un tableau)
-  
-  const existingTipsForThisUser = existingTipsbySelectedCategories.match(searchCity);
+
+  importSelectedTipsForThisUser :
+  array: importTipsByCity
+  array: importTipsByCategories
+  array: importUserCategories
+  = importUserCategories.match(importTipsByCity && importTipsByCategories);
+ 
   */
   
   };
@@ -124,29 +206,35 @@ const selectedTipsForThisUser = () => {
 // MARKERS:
     
     /*  
-      const otherTipsforThisCity = [existingTipsbyCity-selectedTipsForThisUser].match(searchCity);
+      AddMarkers est un reducer MARKERS (un tableau)
+
+      addMarkers: (state, action) => {
+      state.value.markers.push(action.payload);  
+
+      import { addMarkers } from '../reducers/markers';
+
+      import { useDispatch, useSelector } from 'react-redux';
+      const dispatch = useDispatch();
+
+      Lire les informations du store pour pouvoir les afficher:
+      const markers = useSelector((state) => state.markers.value);
       
-      const orangeMarkers = existingTipsForThisUser.map((data, i) => {
-        return <><Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
+      const orangeMarkers = importSelectedTipsForThisUser.map((data, i) => {
+        return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
       });
     
+      const otherTipsforThisCity = existingTipsbyCity-importSelectedTipsForThisUser
+
       const blackMarkers = otherTipsforThisCity.map((data, i) => {
         return <><Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#475059' /> </> 
       });
-    
-      useEffect(() => {
-        fetch(`http://localhost:3000/tips/:cityname`)
-          .then(response => response.json())
-          .then((data) => {
-            data.result && dispatch(addMarkers({orangeMarkers + blackMarkers});
-          });
-       }, []);
-    
-       AddMarkers est un reducer (un tableau)
+
+      const addMarkers = (newMarkers) => {
+      dispatch(addMarkers({orangeMarkers} && {blackMarkers});
+      },
+
     */
     
-
- 
 
   return (
   <View style={styles.mainContainer}>
@@ -195,13 +283,14 @@ const selectedTipsForThisUser = () => {
         region={region} 
         >
         {geolocation && <Marker coordinate={geolocation} title="My position" pinColor="#F77B55" />}
+         {/* {addMarkers} */}
       </MapView>
     </View>  
 
      <ScrollView contentContainerStyle={styles.scrollContainer} className={styles.bottomContainer}>
-     {/* {selectedTipsForThisUser} */}
+     {/* {importSelectedTipsForThisUser} */}
     
-      {scrollTest}
+      {scrollList}
      </ScrollView>
 
   </View> 
