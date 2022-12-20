@@ -10,12 +10,11 @@ import SignUpScreen from './screens/SignUpScreen';
 import DesCriptypScreen from './screens/DesCriptypScreen'; // Ajout import Screen
 import DisplayUserAlbumScreen from './screens/DisplayUserAlbumScreen';
 import NewPostScreen from './screens/NewPostScreen';
-
-
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import user from './reducers/user'
 // import user from './reducers/user';
-
+const reducers = ({user});
 const store = configureStore({
   reducer: { },
 });
@@ -61,7 +60,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer >
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="DesCriptyp">
+        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="SignIn">
           <Stack.Screen name="TabNavigator" component={TabNavigator} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
