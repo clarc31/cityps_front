@@ -16,7 +16,7 @@ import user from './reducers/user'
 // import user from './reducers/user';
 const reducers = ({user});
 const store = configureStore({
-  reducer: { },
+  reducer: {}
 });
 
 const Stack = createNativeStackNavigator();
