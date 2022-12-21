@@ -17,6 +17,10 @@ import {
   ScrollView,
 } from 'react-native';
 
+// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+const BACKEND = 'http://192.168.142.202:3000'
+
+
 export default function HomeScreen({ navigation }) {
 
 // categories selected by user : it's an array from User reducer :
@@ -41,14 +45,10 @@ useEffect(() => {
         if (status === 'granted') {
           Location.watchPositionAsync({ distanceInterval: 10 },
             (location) => {
-              console.log("location", location)
               setGeoLocation({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
               setRegion({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
-            });
-        }
-      })();
-
-  // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
+            
+                      // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
 
   // => on va sur le site de l'API : https://adresse.data.gouv.fr/api-doc/adresse
 
@@ -57,19 +57,23 @@ useEffect(() => {
     Les paramètres lat et lon sont obligatoires: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357"
     Le paramètre type permet forcer le type de retour: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street"
   */
+      const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${location.coords.longitude}&lat=${location.coords.latitude}`
 
-      fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${city.geometry.coordinates[0]}&lat=${city.geometry.coordinates[1]}`)
+      fetch(url)
       .then(response => response.json())
-  
+
   // 3) on appelle la BDD pour afficher les typs :
       .then((data) => {
-      fetch(`http://localhost:3000/typs/:city`)
+        const urlCity = `${BACKEND}/typs/${data.features[0].properties.city}`
+      fetch(urlCity)
       .then(response => response.json())
       .then((data) => {
-        data.result && setTyps(data);
+        data.result && setTyps(data.city);
       });
       });
-
+     });
+      }
+      })();
     }, []);
 
 
@@ -106,7 +110,7 @@ fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
 
 
 
-//------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------Markers------------------------------------------------------
 
 
 // ADD MARKERS ON MAP :
@@ -118,27 +122,36 @@ data = un typs dans le map
 
 const addmarkers = typs.map((data, i) => {
   if (userCategories.includes(data.category)) {
-  return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
+  return <Marker key={i} coordinate={{ latitude: data.coordinates.latitude, longitude: data.coordinates.longitude }} pinColor="orange"/>
   } else {
-  return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#475059' /> </> 
+  return <Marker key={i} coordinate={{ latitude: data.coordinates.latitude, longitude: data.coordinates.longitude }} pinColor="black"/>
   }})
 
   
-//------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------Typs List----------------------------------------------------------
 
 
 // DISPLAY THE TYPS LIST (scroll list):
 
 const scrollList = typs.map((data, i) => {
+
+  let content = data.content;
+  if(data.content.length > 45) {
+    content = data.content.slice(0, 45) + "..."
+  }
   return (     
    <View style={styles.typsList} key={i}>
-     <Image source={require(data.author.photo)}  style={styles.avatar} /> 
+    <View style={styles.avatarContainer}>
+     <Image source={{uri : data.author.photo, width: 50, height: 50}}  style={styles.avatar} /> 
+     </View>
      <View style={styles.insideCardContainer}>
-          <View style={styles.topCarte}>
-           <Text style={styles.title}> {data.title} </Text> 
-           <Text style={styles.place}> {data.city} </Text> 
-         </View>
-         <Text style={styles.descriptContent}> {data.content} </Text> 
+        <View style={styles.topCarte}>
+          <Text style={styles.title}> {data.title} </Text> 
+          <Text style={styles.place}> {data.city} </Text>  
+       </View>
+       <View style={styles.contentContainer}>
+       <Text style={styles.descriptContent}> {content} </Text> 
+       </View>
      </View>
    </View>
    )
@@ -265,17 +278,38 @@ const styles = StyleSheet.create({
   },
   topCarte: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: "auto",
   },
   insideCardContainer: {
+    flex: 1,
     flexDirection: 'column',
+    height: "100%",
+    paddingVertical: 10,
+    backgroundColor: "#FFFFFF",
+  },
+  contentContainer: {
+   justifyContent: "center",
+   height: '80%',
   },
   avatar: {
     height: 50,
     width: 50,
     borderRadius: 30,
   },
-
-  
+  avatarContainer: {
+    marginRight: 10,
+    borderRightColor: "grey",
+    borderRightWidth: 1,
+    padding: 5
+  },
+  title: {
+    fontWeight: "bold",
+  },
+  place: {
+    fontStyle: "italic",
+    fontWeight: "bold",
+  }
 });
 
 

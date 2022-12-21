@@ -47,7 +47,7 @@ const handleConnection = () => {
             console.log('Retour du BE', data)
             if (data.result) {
                 console.log(data);
-                dispatch(login({ email: signInEmail, token: data.token }));
+                dispatch(login({email: signInEmail, token: data.token, categories: data.categories})); 
                 setSignInEmail('');
                 setSignInPassword('');
                navigation.navigate('TabNavigator');
