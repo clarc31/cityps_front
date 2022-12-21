@@ -17,8 +17,8 @@ import {
   ScrollView,
 } from 'react-native';
 
-// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
-const BACKEND = 'http://192.168.142.202:3000'
+const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'http://192.168.142.202:3000'
 
 
 export default function HomeScreen({ navigation }) {

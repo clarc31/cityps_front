@@ -24,8 +24,8 @@ const [signInPassword, setSignInPassword] = useState('');
 // console.log('signInEmail',signInEmail);
 // console.log('signInPassword',signInPassword);
 
-// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
-const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
+const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'http://192.168.142.41:3000'; // Local Zouhair
 //const BACKEND = 'http://192.168.43.162:3000'; // Local Christian 
 
 const handleConnection = () => {
