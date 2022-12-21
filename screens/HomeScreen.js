@@ -1,11 +1,13 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MapView from 'react-native-maps'; // initialRegion permet de gérer le positionnement par défaut de la carte.
 import { Marker } from 'react-native-maps'; // pour les markers
 import * as Location from 'expo-location'; // pour la GÉOLOCALISATION
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { logout } from '../reducers/user'; // handle logout
+
 
 import {
   StyleSheet,
@@ -22,7 +24,7 @@ const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
 
 
 export default function HomeScreen({ navigation }) {
-
+  const dispatch = useDispatch();
 // categories selected by user : it's an array from User reducer :
   const userCategories = useSelector((state) => state.user.value.categories);
 
@@ -31,6 +33,13 @@ export default function HomeScreen({ navigation }) {
   const [region, setRegion] = useState(null); // display city on map 
   const [typs, setTyps] = useState([]); // pour le useEffect /typs by geoloc or by inputCity
 
+
+// -----------------------------------------------logOut-----------------------------------------------------------
+
+const handleLogout = () => {
+  navigation.navigate('SignIn');
+  dispatch(logout());
+};
 
 //-----------------------------------------------initialisation-----------------------------------------------------------
 
@@ -174,7 +183,7 @@ const scrollList = typs.map((data, i) => {
    )
  });
 
- // ONPRESS => go to "DesCriptypScreen" of the typs
+ // ONPRESS => go to "DesCriptypScreen" of the typ
 
 
 //---------------------------------------------Return--------------------------------------------------------
@@ -210,7 +219,7 @@ const scrollList = typs.map((data, i) => {
         </View>
 
         <TouchableOpacity >
-            <Icon name='bars' size={40} color='#475059' style={styles.menuIcon} />
+            <Icon name='power-off' size={40} color='#f77b55' style={styles.menuIcon} onPress={() => handleLogout()}/>
         </TouchableOpacity>
 
 
