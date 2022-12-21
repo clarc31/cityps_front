@@ -16,7 +16,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { CheckBox } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 
-const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
 
 
 const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
