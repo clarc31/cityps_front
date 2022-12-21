@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import MapView from 'react-native-maps'; // initialRegion permet de gérer le positionnement par défaut de la carte.
 import { Marker } from 'react-native-maps'; // pour les markers
 import * as Location from 'expo-location'; // pour la GÉOLOCALISATION
@@ -16,42 +17,79 @@ import {
   ScrollView,
 } from 'react-native';
 
+// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+const BACKEND = 'http://192.168.142.202:3000'
+
+
 export default function HomeScreen({ navigation }) {
 
-  const [geolocation, setGeoLocation] = useState(null); // 1ere etape geoloc
-  const [inputCity, setInputCity] = useState(null); // 2eme etape searchbar
-  const [region, setRegion] = useState(null); // display on map 
+// categories selected by user : it's an array from User reducer :
+  const userCategories = useSelector((state) => state.user.value.categories);
+
+  const [geolocation, setGeoLocation] = useState(null); // geoloc
+  const [inputCity, setInputCity] = useState(null); // searchbar
+  const [region, setRegion] = useState(null); // display city on map 
+  const [typs, setTyps] = useState([]); // pour le useEffect /typs/:city
 
 
-// DISPLAY USER GEOLOCALISATION ON HOMESCREENN MAP :
+//-----------------------------------------------initialisation-----------------------------------------------------------
+
+
+// AT INIT : DISPLAY USER GEOLOCALISATION ON MAP AND SET ASSOCIATED TYPS :
   
 useEffect(() => {
   (async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-  
+
+  // 1) DISPLAY USER GEOLOCALISATION ON HOMESCREENN MAP AT INIT :
         if (status === 'granted') {
           Location.watchPositionAsync({ distanceInterval: 10 },
             (location) => {
-              console.log("location", location)
               setGeoLocation({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
               setRegion({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
-            });
-        }
+            
+                      // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
+
+  // => on va sur le site de l'API : https://adresse.data.gouv.fr/api-doc/adresse
+
+  /* on choisi : /reverse/ Point d’entrée pour le géocodage inverse.
+  consignes:
+    Les paramètres lat et lon sont obligatoires: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357"
+    Le paramètre type permet forcer le type de retour: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street"
+  */
+      const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${location.coords.longitude}&lat=${location.coords.latitude}`
+
+      fetch(url)
+      .then(response => response.json())
+
+  // 3) on appelle la BDD pour afficher les typs :
+      .then((data) => {
+        const urlCity = `${BACKEND}/typs/${data.features[0].properties.city}`
+      fetch(urlCity)
+      .then(response => response.json())
+      .then((data) => {
+        data.result && setTyps(data.city);
+      });
+      });
+     });
+      }
       })();
     }, []);
 
 
-// MANAGE THE SEARCH BAR :
+//------------------------------------------------Search bar---------------------------------------------------------
 
-// check if inputCity in the searchbar exist in API :  
+
+// SEARCH BAR : DISPLAY INPUTCITY ON MAP AND SET ASSOCIATED TYPS :
+
 function handleSearchBar () {
 
-//request: get geographic data from API
+// 1) check if inputCity in the searchbar exists in API - request: get geographic data from API
 fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
 .then((response) => response.json())
 .then((data) => {
 
-// create an if statement that will return the city that match what has been entered into the search bar:
+// 2) inputCity location on map : create an if statement that will return the city that match what has been entered into the search bar:
 
 // a) if no city is found by API, nothing is done :
   if (data.features.length === 0) {
@@ -70,171 +108,58 @@ fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
     });
   };
 
-// SETUP OF THE TIPS LIST (scroll list):
 
-const scrollList = []
-for(let i = 0; i < 10; i++) {
- scrollTest.push(     
-  <View style={styles.tipsList} key={i}>
-    <Image source={require('../assets/avatar.png')}  style={styles.avatar} /> 
-    <View style={styles.insideCardContainer}>
-         <View style={styles.topCarte}>
-          <Text style={styles.title}> Titre </Text> 
-          <Text style={styles.place}> Lieu </Text> 
-        </View>
-        <Text style={styles.descriptContent}> Premières lignes du descriptyps</Text> 
-    </View>
-  </View>
-  )
-};
 
-const importSelectedTipsForThisUser = () => {
+//---------------------------------------------------Markers------------------------------------------------------
 
-  /*
-  => 1) Créer une route GET "existingTipsbyCity" (qui affiche tous les tips dispo sur l'appli toutes categories confondues pour cette ville)
+
+// ADD MARKERS ON MAP :
+
+/* 
+raisonnement : on fait un typs.map et une condition : id categories dans typs === id categories dans user:
+data = un typs dans le map 
+*/
+
+const addmarkers = typs.map((data, i) => {
+  if (userCategories.includes(data.category)) {
+  return <Marker key={i} coordinate={{ latitude: data.coordinates.latitude, longitude: data.coordinates.longitude }} pinColor="orange"/>
+  } else {
+  return <Marker key={i} coordinate={{ latitude: data.coordinates.latitude, longitude: data.coordinates.longitude }} pinColor="black"/>
+  }})
+
   
-  router.get("/tips/:city", (req, res) => {
-  Tip.find({ city: req.params.city }).then(data => {
-    res.json({ result: true, city: data });
-  });
+//---------------------------------------------Typs List----------------------------------------------------------
+
+
+// DISPLAY THE TYPS LIST (scroll list):
+
+const scrollList = typs.map((data, i) => {
+
+  let content = data.content;
+  if(data.content.length > 45) {
+    content = data.content.slice(0, 45) + "..."
+  }
+  return (     
+   <View style={styles.typsList} key={i}>
+    <View style={styles.avatarContainer}>
+     <Image source={{uri : data.author.photo, width: 50, height: 50}}  style={styles.avatar} /> 
+     </View>
+     <View style={styles.insideCardContainer}>
+        <View style={styles.topCarte}>
+          <Text style={styles.title}> {data.title} </Text> 
+          <Text style={styles.place}> {data.city} </Text>  
+       </View>
+       <View style={styles.contentContainer}>
+       <Text style={styles.descriptContent}> {content} </Text> 
+       </View>
+     </View>
+   </View>
+   )
  });
-
-  importTipsByCity est un reducer TIPS (un tableau) 
-  
-  importTipsByCity : (state, action) => {
-  state.value.tips(action.payload); 
-  },
-
-  import { importTipsByCity } from '../reducers/tips';
-
-  Lire les informations du store pour pouvoir les afficher:
-  const tips = useSelector((state) => state.tips.value);
-
-  import { useDispatch, useSelector } from 'react-redux';
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-      fetch(`http://localhost:3000/tips/:city`)
-        .then(response => response.json())
-        .then((data) => {
-          data.result && dispatch(importTipsByCity(data.city);
-        });
-     }, []);
-  
-
-  Test à faire:
-  const markers = tips.city.map((data, i) => {
-    return <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} title={data.city} />;
-  });
-
-
-  => 2) Créer une route GET "existingTipsbyCategories" (qui affiche tous les tips dispo sur l'appli, classés par categorie)
-  
-  router.get("/tips/:categories", (req, res) => {
-  Tip.find({ categories: req.params.categories }).then(data => {
-    res.json({ result: true, categories: data });
-  });
-  });
-
-  importTipsByCategories est un reducer TIPS (un tableau) 
-  
-  importTipsByCategories : (state, action) => {
-  state.value.tips(action.payload); 
-  },
-
-  import { importTipsByCategories } from '../reducers/tips';
-
-  Lire les informations du store pour pouvoir les afficher:
-  const tips = useSelector((state) => state.tips.value);
-
-  import { useDispatch, useSelector } from 'react-redux';
-  const dispatch = useDispatch();
-
-  UseDispatch : méthode chargée de l’envoi de l’ordre dans le reducer. 
-  Elle met à jour le store et déclenche les actions associées au reducer.
-
-  useEffect(() => {
-      fetch(`http://localhost:3000/tips/:categories`)
-        .then(response => response.json())
-        .then((data) => {
-          data.result && dispatch(importTipsByCategories(data.categories));
-        });
-     }, []);
-  
-
-  => 3) Créer une route GET "selectedCategoriesByUSer" (qui affiche uniquement les categories selectionnées par le user)
-  
-  router.get("/user/:categories", (req, res) => {
-  User.find({ categories: req.params.categories }).then(data => {
-    res.json({ result: true, categories: data });
-  });
-  });
-
-  importUserCategories est un reducer USER (un tableau)
-
-  importUserCategories : (state, action) => {
-  state.value.categories(action.payload); 
-  },
-  
-  import { importUserCategorie } from '../reducers/users';
-
-  Lire les informations du store pour pouvoir les afficher:
-  const users = useSelector((state) => state.users.value);
-
-  import { useDispatch, useSelector } from 'react-redux';
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-      fetch(`http://localhost:3000/user/:categories`)
-        .then(response => response.json())
-        .then((data) => {
-          data.result && dispatch(importUserCategories(data.user);
-        });
-     }, []);
-  
-
-  importSelectedTipsForThisUser :
-  array: importTipsByCity
-  array: importTipsByCategories
-  array: importUserCategories
-  = importUserCategories.match(importTipsByCity && importTipsByCategories);
  
-  */
-  
-  };
 
-// MARKERS:
-    
-    /*  
-      AddMarkers est un reducer MARKERS (un tableau)
+//---------------------------------------------Return--------------------------------------------------------
 
-      addMarkers: (state, action) => {
-      state.value.markers.push(action.payload);  
-
-      import { addMarkers } from '../reducers/markers';
-
-      import { useDispatch, useSelector } from 'react-redux';
-      const dispatch = useDispatch();
-
-      Lire les informations du store pour pouvoir les afficher:
-      const markers = useSelector((state) => state.markers.value);
-      
-      const orangeMarkers = importSelectedTipsForThisUser.map((data, i) => {
-        return <> <Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#F77B55' /> </> 
-      });
-    
-      const otherTipsforThisCity = existingTipsbyCity-importSelectedTipsForThisUser
-
-      const blackMarkers = otherTipsforThisCity.map((data, i) => {
-        return <><Marker key={i} coordinate={{ latitude: data.latitude, longitude: data.longitude }} /><Icon name='location-pin' color='#475059' /> </> 
-      });
-
-      const addMarkers = (newMarkers) => {
-      dispatch(addMarkers({orangeMarkers} && {blackMarkers});
-      },
-
-    */
-    
 
   return (
   <View style={styles.mainContainer}>
@@ -283,13 +208,12 @@ const importSelectedTipsForThisUser = () => {
         region={region} 
         >
         {geolocation && <Marker coordinate={geolocation} title="My position" pinColor="#F77B55" />}
-         {/* {addMarkers} */}
+        {addmarkers}
+
       </MapView>
     </View>  
 
      <ScrollView contentContainerStyle={styles.scrollContainer} className={styles.bottomContainer}>
-     {/* {importSelectedTipsForThisUser} */}
-    
       {scrollList}
      </ScrollView>
 
@@ -298,6 +222,8 @@ const importSelectedTipsForThisUser = () => {
 );
 }
 
+
+//---------------------------------------------Style--------------------------------------------------------
 
 const styles = StyleSheet.create({
 
@@ -340,7 +266,7 @@ const styles = StyleSheet.create({
   scrollContainer: {
     backgroundColor: '#77D0DE',
   },
-  tipsList:  {
+  typsList:  {
     flexDirection: "row",
     borderRadius: 10,
     borderColor: "#F77B55",
@@ -352,17 +278,38 @@ const styles = StyleSheet.create({
   },
   topCarte: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: "auto",
   },
   insideCardContainer: {
+    flex: 1,
     flexDirection: 'column',
+    height: "100%",
+    paddingVertical: 10,
+    backgroundColor: "#FFFFFF",
+  },
+  contentContainer: {
+   justifyContent: "center",
+   height: '80%',
   },
   avatar: {
     height: 50,
     width: 50,
     borderRadius: 30,
   },
-
-  
+  avatarContainer: {
+    marginRight: 10,
+    borderRightColor: "grey",
+    borderRightWidth: 1,
+    padding: 5
+  },
+  title: {
+    fontWeight: "bold",
+  },
+  place: {
+    fontStyle: "italic",
+    fontWeight: "bold",
+  }
 });
 
 
