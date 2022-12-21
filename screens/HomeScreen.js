@@ -155,7 +155,8 @@ const scrollList = typs.map((data, i) => {
     content = data.content.slice(0, 45) + "..."
   }
   return (     
-   <View style={styles.typsList} key={i}>
+    <TouchableOpacity key={i} opacity={0.8} onPress={() => navigation.navigate('Descriptyp')}>
+   <View style={styles.typsList} key={i} >
     <View style={styles.avatarContainer}>
      <Image source={{uri : data.author.photo, width: 50, height: 50}}  style={styles.avatar} /> 
      </View>
@@ -169,9 +170,12 @@ const scrollList = typs.map((data, i) => {
        </View>
      </View>
    </View>
+   </TouchableOpacity>
    )
  });
- 
+
+ // ONPRESS => go to "DesCriptypScreen" of the typs
+
 
 //---------------------------------------------Return--------------------------------------------------------
 
