@@ -1,6 +1,6 @@
 // import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, logout } from '../reducers/user';
+import { login } from '../reducers/user';
 import React, { useState } from 'react';
 import {
   Image,
@@ -64,8 +64,8 @@ return (
         <View style={styles.containerSignIn}>
            <TouchableOpacity    onPress={() => navigation.navigate('SignUp')} style={styles.inputSignUp}><Text>  S'inscrire (c'est gratuit!)</Text></TouchableOpacity>
             <Text>Déjà inscrit ?</Text>
-            <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputEmail} placeholder="  Email" />
-            <TextInput onChangeText={(value) => setSignInPassword(value)}  style={styles.inputPassword} placeholder="  Password" />
+            <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputEmail} placeholder="  Email" value={signInEmail}/>
+            <TextInput onChangeText={(value) => setSignInPassword(value)}  style={styles.inputPassword} placeholder="  Password" value={signInPassword}/>
         </View>
         <View style={styles.containerButton}>
         <FontAwesome name='circle-thin' size={150} color="#d6f5fa"  onPress={() => handleConnection()} />

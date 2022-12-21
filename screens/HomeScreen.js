@@ -1,11 +1,13 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import MapView from 'react-native-maps'; // initialRegion permet de gérer le positionnement par défaut de la carte.
 import { Marker } from 'react-native-maps'; // pour les markers
 import * as Location from 'expo-location'; // pour la GÉOLOCALISATION
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { logout } from '../reducers/user'; // handle logout
+
 
 import {
   StyleSheet,
@@ -17,20 +19,27 @@ import {
   ScrollView,
 } from 'react-native';
 
-// const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
-const BACKEND = 'http://192.168.142.202:3000'
+const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'http://192.168.142.202:3000'
 
 
 export default function HomeScreen({ navigation }) {
-
+  const dispatch = useDispatch();
 // categories selected by user : it's an array from User reducer :
   const userCategories = useSelector((state) => state.user.value.categories);
 
   const [geolocation, setGeoLocation] = useState(null); // geoloc
   const [inputCity, setInputCity] = useState(null); // searchbar
   const [region, setRegion] = useState(null); // display city on map 
-  const [typs, setTyps] = useState([]); // pour le useEffect /typs/:city
+  const [typs, setTyps] = useState([]); // pour le useEffect /typs by geoloc or by inputCity
 
+
+// -----------------------------------------------logOut-----------------------------------------------------------
+
+const handleLogout = () => {
+  navigation.navigate('SignIn');
+  dispatch(logout());
+};
 
 //-----------------------------------------------initialisation-----------------------------------------------------------
 
@@ -48,7 +57,7 @@ useEffect(() => {
               setGeoLocation({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
               setRegion({latitude : location.coords.latitude, longitude: location.coords.longitude, latitudeDelta: 0.08,longitudeDelta:0.08});
             
-                      // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
+  // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
 
   // => on va sur le site de l'API : https://adresse.data.gouv.fr/api-doc/adresse
 
@@ -57,14 +66,15 @@ useEffect(() => {
     Les paramètres lat et lon sont obligatoires: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357"
     Le paramètre type permet forcer le type de retour: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street"
   */
+
       const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${location.coords.longitude}&lat=${location.coords.latitude}`
 
       fetch(url)
       .then(response => response.json())
 
-  // 3) on appelle la BDD pour afficher les typs :
+  // 3) on appelle la BDD pour afficher les typs sur la map:
       .then((data) => {
-        const urlCity = `${BACKEND}/typs/${data.features[0].properties.city}`
+      const urlCity = `${BACKEND}/typs/${data.features[0].properties.city}`
       fetch(urlCity)
       .then(response => response.json())
       .then((data) => {
@@ -105,8 +115,22 @@ fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
     let displayOnMap = { ...CityPropsAPI, latitudeDelta:0.1, longitudeDelta:0.1};
     
     setRegion(displayOnMap);
+
+    // 3) display typs of the inputCity on map (from BDD):
+    const urlCity = `${BACKEND}/typs/${inputCity}`
+    fetch(urlCity)
+    .then(response => response.json())
+    .then((data) => {
+      data.result && setTyps(data.city);
     });
-  };
+
+    // 4) vider la searchBar on press :
+    setInputCity('');
+
+    });
+
+
+};
 
 
 
@@ -140,7 +164,8 @@ const scrollList = typs.map((data, i) => {
     content = data.content.slice(0, 45) + "..."
   }
   return (     
-   <View style={styles.typsList} key={i}>
+    <TouchableOpacity key={i} opacity={0.8} onPress={() => navigation.navigate('Descriptyp')}>
+   <View style={styles.typsList} key={i} >
     <View style={styles.avatarContainer}>
      <Image source={{uri : data.author.photo, width: 50, height: 50}}  style={styles.avatar} /> 
      </View>
@@ -154,9 +179,12 @@ const scrollList = typs.map((data, i) => {
        </View>
      </View>
    </View>
+   </TouchableOpacity>
    )
  });
- 
+
+ // ONPRESS => go to "DesCriptypScreen" of the typ
+
 
 //---------------------------------------------Return--------------------------------------------------------
 
@@ -191,7 +219,7 @@ const scrollList = typs.map((data, i) => {
         </View>
 
         <TouchableOpacity >
-            <Icon name='bars' size={40} color='#475059' style={styles.menuIcon} />
+            <Icon name='power-off' size={40} color='#f77b55' style={styles.menuIcon} onPress={() => handleLogout()}/>
         </TouchableOpacity>
 
 
@@ -286,7 +314,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     height: "100%",
     paddingVertical: 10,
-    backgroundColor: "#FFFFFF",
+    // backgroundColor: "#FFFFFF",
   },
   contentContainer: {
    justifyContent: "center",

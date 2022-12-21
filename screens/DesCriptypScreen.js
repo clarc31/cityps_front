@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function DescripTypScreen() {
+export default function DescripTypScreen({ navigation }) {
 /*
   // 2nd request : send new place to backend to register it in database
 fetch('http://localhost:3000/places', {

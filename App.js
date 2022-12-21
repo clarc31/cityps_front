@@ -47,8 +47,7 @@ const persistor = persistStore(store)
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-console.log('stack', Stack) // ---------------------------------
-console.log('Tab', Tab) // -------------------------------------
+
 const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={({ route }) => ({
@@ -73,30 +72,43 @@ const TabNavigator = () => {
       }
       
       
-    })} initialRouteName="Découvrir">
+    })} 
+    initialRouteName="Découvrir"
+    >
       <Tab.Screen name="Mes albums" component={DisplayUserAlbumScreen} />
-      <Tab.Screen name="Découvrir" component={HomeScreen} />
+      <Tab.Screen name="Découvrir" component={Home} />
       <Tab.Screen name="Postyps" component={NewPostScreen} />
     </Tab.Navigator>
   );
 };
+
+// Nous avons nesté un stack navigator à l'interieur du tab navigator pour activer la fonction onPress de HomeScreen pour aller sur la description du Typs.
+const Home = () => {
+  return (
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="Home" component={HomeScreen} />
+    <Stack.Screen name="Descriptyp" component={DesCriptypScreen} />
+  </Stack.Navigator>
+  )
+}
+
 
 export default function App() {
   
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-      <NavigationContainer >
-        <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="SignIn">
-          <Stack.Screen name="TabNavigator" component={TabNavigator} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="DesCriptyp" component={DesCriptypScreen}/>
-          <Stack.Screen name="DisplayUserAlbum" component={DisplayUserAlbumScreen}/>
-          <Stack.Screen name="NewPost" component={NewPostScreen}/>
-          <Stack.Screen name="SignIn"component={SignInScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="SignIn">
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
+            {/* <Stack.Screen name="DesCriptyp" component={DesCriptypScreen}/> */}
+            <Stack.Screen name="DisplayUserAlbum" component={DisplayUserAlbumScreen}/>
+            <Stack.Screen name="NewPost" component={NewPostScreen}/>
+            <Stack.Screen name="SignIn"component={SignInScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
       </PersistGate>
     </Provider>
   );
