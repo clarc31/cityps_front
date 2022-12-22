@@ -35,6 +35,11 @@ export default function SignUpScreen ({ navigation }) {
   const [signUpUserName, setSignUpUserName] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpPassword, setSignUpPassword] = useState('');
+  const [emailError, setEmailError] = useState(false); // test email REGEX
+  const [missingInput, setMissingInput] = useState(false); // test missing input
+
+  
+
   //---------------------------------FETCH CATEGORIES-----------------------------------------------------------------------------  
     useEffect (() =>{
       fetch(`${BACKEND}/categories`)
@@ -75,6 +80,7 @@ export default function SignUpScreen ({ navigation }) {
     // console.log(signUpFirstName)
 //-----------------------------------FUNCTION HANDLEREGISTER---------------------------------------------------------------------------
 const handleRegister = () => {
+ 
   const idsCategory = envie.map(category => {
     if(category.isSelected) {
       return category._id
@@ -84,6 +90,20 @@ const handleRegister = () => {
   // console.log("idsCategory", idsCategory)
   const idsCategoryFiltered = idsCategory.filter(category => category !== undefined)
 
+  if (
+    !idsCategoryFiltered.length > 0 
+    || !signUpEmail.length > 0 
+    || !signUpPassword.length > 0
+    || !signUpName.length > 0 
+    || !signUpFirstName.length > 0
+    || !signUpUserName.length > 0 
+    
+    ) {
+      console.log("Please enter")
+      setMissingInput(true);
+      return;
+    }
+   
   // console.log("idsCategoryFiltered", idsCategoryFiltered)
 
   const formData = new FormData();
@@ -99,8 +119,17 @@ const handleRegister = () => {
   formData.append("email", signUpEmail)
   formData.append("password", signUpPassword)
   formData.append("categories", idsCategoryFiltered)
-  console.log(signUpFirstName);
-  console.log(formData)
+  // console.log(signUpFirstName);
+  // console.log(formData)
+
+  // set regex :
+  const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  console.log(!EMAIL_REGEX.test(signUpEmail))
+        if (!EMAIL_REGEX.test(signUpEmail)) {
+          setEmailError(true);
+          return
+        }
+        
 //------------------------------FETCH SIGNUP-----------------------------------------------------------------------------------
   fetch(`${BACKEND}/users/signup`, {
         method: 'POST',
@@ -117,20 +146,21 @@ const handleRegister = () => {
              username:signUpUserName,
           // //   email: signUpEmail,
              token: data.token, }));
-          //   setSignUpName('');
-          //   setSignUpFirstname('');
-          //   setImage('');
-          //   setSignUpUserName('');
-          //   setSignUpEmail('');
-          //   setSignUpPassword('');
-          //   setSignUpInscriptionDate('');
+            // setSignUpName('');
+            // setSignUpFirstname('');
+            // setImage('');
+            // setSignUpUserName('');
+            // setSignUpEmail('');
+            // setSignUpPassword('');
+            // setSignUpInscriptionDate('');
             navigation.navigate('TabNavigator');
     })
           //  );
 };
 
 
-const handleSubmit = () => {
+const handleModal = () => {
+  
     setModalVisible(true);
 }
   
@@ -158,6 +188,7 @@ return(
         </View>
         {/* <View style={styles.inputContainer2}> */}
             <TextInput placeholder="  Email" onChangeText={(value) => setSignUpEmail(value)}  style={styles.input2} />
+            {emailError && <Text style={styles.error}>Invalid email address</Text>}
             <TextInput placeholder="  Password" onChangeText={(value) => setSignUpPassword(value)}  style={styles.input2} />
         {/* </View>       */}
         <View style={styles.inputContainer1}>
@@ -165,11 +196,14 @@ return(
                 <TextInput placeholder="  Nom" onChangeText={(value) => setSignUpName(value)}  style={styles.input1} />
                 <TextInput placeholder="  Prenom" onChangeText={(value) => setSignUpFirstname(value)}  style={styles.input1} />
                 <TextInput placeholder="  Pseudo" onChangeText={(value) => setSignUpUserName(value)}  style={styles.input1} />
-                <TouchableOpacity onPress={() => handleSubmit()}  style={styles.button} activeOpacity={0.9}><Text style={styles.buttonText}>envie</Text></TouchableOpacity>
+                <TouchableOpacity onPress={() => handleModal()}  style={styles.button} activeOpacity={0.9}><Text style={styles.buttonText}> vos envies</Text></TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => pickImage()}>
                 <Image source={require('../assets/avatar.png')}  className={styles.avatar} />  
-            </TouchableOpacity>    
+            </TouchableOpacity>   
+        </View>
+        <View>
+        {missingInput && <Text style={styles.missingInput}> Veuillez remplir tous les champs de saisie </Text>} 
         </View>
         <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={() => handleRegister()}>
@@ -183,7 +217,7 @@ return(
                {formatedData}
              </View>
              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.Button} activeOpacity={0.8}>
-               <Text style={styles.textButton}>start</Text>
+               <Text style={styles.textButton}>valider</Text>
              </TouchableOpacity>
            </View>
          </Modal>
@@ -231,7 +265,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
       },
       buttonText:{
-        marginLeft: '45%',
+        marginLeft: '35%',
         fontSize: 20,
         marginTop: '2%'
       },

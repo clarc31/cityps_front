@@ -14,12 +14,14 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 // import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 
-
 export default function SignInScreen({ navigation }) { 
 	const dispatch = useDispatch();
 
 const [signInEmail, setSignInEmail] = useState('');
 const [signInPassword, setSignInPassword] = useState('');
+const [emailError, setEmailError] = useState(false); // test email REGEX
+
+
 // ctrl states
 // console.log('signInEmail',signInEmail);
 // console.log('signInPassword',signInPassword);
@@ -37,6 +39,15 @@ const handleConnection = () => {
     // console.log('signInEmail2',signInEmail);
     // console.log('signInPassword2',signInPassword);
 
+
+   // Set REGEX : Grabbed from emailregex.com
+const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+console.log(!EMAIL_REGEX.test(signInEmail))
+        if (!EMAIL_REGEX.test(signInEmail)) {
+          setEmailError(true);
+          return
+        }
+        
 // RETIRER COMMENTAIRE POUR REACTIVER FETCH VERS BE
     fetch(`${BACKEND}/users/signin`, {
         method: 'POST',
@@ -54,8 +65,7 @@ const handleConnection = () => {
             }
         });
 };
-
-
+  
 return (
     <View style={styles.containerMain}>
         <View style={styles.containerImage}>
@@ -65,6 +75,7 @@ return (
            <TouchableOpacity    onPress={() => navigation.navigate('SignUp')} style={styles.inputSignUp}><Text>  S'inscrire (c'est gratuit!)</Text></TouchableOpacity>
             <Text>Déjà inscrit ?</Text>
             <TextInput onChangeText={(value) => setSignInEmail(value)}  style={styles.inputEmail} placeholder="  Email" value={signInEmail}/>
+            {emailError && <Text style={styles.error}>Invalid email address</Text>}
             <TextInput onChangeText={(value) => setSignInPassword(value)}  style={styles.inputPassword} placeholder="  Password" value={signInPassword}/>
         </View>
         <View style={styles.containerButton}>
