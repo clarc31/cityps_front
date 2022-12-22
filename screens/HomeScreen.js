@@ -33,7 +33,6 @@ export default function HomeScreen({ navigation }) {
   const [region, setRegion] = useState(null); // display city on map 
   const [typs, setTyps] = useState([]); // pour le useEffect /typs by geoloc or by inputCity
 
-
 // -----------------------------------------------logOut-----------------------------------------------------------
 
 const handleLogout = () => {
@@ -92,7 +91,7 @@ useEffect(() => {
 
 // SEARCH BAR : DISPLAY INPUTCITY ON MAP AND SET ASSOCIATED TYPS :
 
-function handleSearchBar () {
+function handleSearchBar () { 
 
 // 1) check if inputCity in the searchbar exists in API - request: get geographic data from API
 fetch(`https://api-adresse.data.gouv.fr/search/?q=${inputCity}`)
@@ -164,7 +163,8 @@ const scrollList = typs.map((data, i) => {
     content = data.content.slice(0, 45) + "..."
   }
   return (     
-    <TouchableOpacity key={i} opacity={0.8} onPress={() => navigation.navigate('Descriptyp')}>
+    <TouchableOpacity key={i} opacity={0.8} onPress={() => navigation.navigate('Descriptyp', data)
+    }>
    <View style={styles.typsList} key={i} >
     <View style={styles.avatarContainer}>
      <Image source={{uri : data.author.photo, width: 50, height: 50}}  style={styles.avatar} /> 
@@ -185,6 +185,7 @@ const scrollList = typs.map((data, i) => {
 
  // ONPRESS => go to "DesCriptypScreen" of the typ
 
+ 
 
 //---------------------------------------------Return--------------------------------------------------------
 

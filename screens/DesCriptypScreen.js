@@ -2,51 +2,44 @@ import {
   Image,
   Text,
   StyleSheet,
-  TextInput,
-  TouchableOpacity,
   View,
-  KeyboardAvoidingView,
-  Modal,
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function DescripTypScreen({ navigation }) {
-/*
-  // 2nd request : send new place to backend to register it in database
-fetch('http://localhost:3000/places', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ nickname: user.nickname, name: newPlace.name, latitude: newPlace.latitude, longitude: newPlace.longitude }),
-  }).then((response) => response.json())
-  .then((data) => {
-    // Dispatch in Redux store if the new place have been registered in database
-    if (data.result) {
-      dispatch(addPlace(newPlace));
-      setCity('');
-    }
-  });
+export default function DescripTypScreen({ navigation, route }) {
 
-  */
+  console.log(route.params);
+
+  const {title, city, date, content, pictures, category, author} = route.params;
+
+const BACKEND = 'https://cityps-back.vercel.app'; // En ligne Vercel
+// const BACKEND = 'http://192.168.142.202:3000'
+
+  const images = pictures.map((image, i) => {
+    return <Image source={{uri : image}} key={i} style={styles.image}/>
+  })  
+
+  console.log("images", images)
 
   return (
     <View style={styles.mainContainer}>
       <View>
-        <Image source={require('../assets/descriptypsColor.png')}/>
+      <Image source={require('../assets/descriptypsColor.png')}/>
           <View style={styles.tipsList} >
-            <Image source={require('../assets/avatar.png')}  style={styles.avatar} />
-                  <Text style={styles.title}> Titre </Text>
-                  <Text style={styles.place}> Lieu </Text>
+            <Image source={{uri : author.photo}}  style={styles.avatar} />
+                  <Text style={styles.title}> {title} </Text>
+                  <Text style={styles.place}> {city} </Text>
+                  {/* <Text style={styles.category}> {category} </Text> */}
+                  {/* <Text style={styles.date}> {date} </Text> */}
           </View>
       </View>
-      <View>
-        <Image source={require('../assets/logisignin.png')} style={styles.image}/>
+      <View >
+        <View style={styles.imageContainer}>
+      {images}
+        </View>
         <View style={styles.iconContainer}>
-          <Text style={styles.text}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,
-              molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum
-              numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium
-              optio, eaque rerum! Provident similique accusantium nemo autem. Veritatis
-              obcaecati tenetur iure eius earum ut molestias architecto voluptate aliquam
-              nihil, eveniet aliquid culpa officia aut! Impedit sit sunt quaerat, odit,</Text>
+          <Text style={styles.text}>{content}</Text>
               <View style={styles.icons}>
                 <View style={styles.like}>
                   <Icon name='thumbs-up' size={40} color='#475059' style={styles.menuIcon}/>
@@ -89,8 +82,15 @@ const styles = StyleSheet.create({
     width: 50,
     borderRadius: 30,
   },
+  imageContainer: {
+    justifyContent: "center",
+    flexDirection: "row",
+    flexWrap: "wrap"
+  },
   image:{
-    margin: '4%'
+    width: 150,
+    height: 150,
+    margin: 2
   },
   iconContainer:{
     backgroundColor: "#D6F5FA",
