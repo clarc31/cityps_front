@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import MapView from "react-native-maps"; // initialRegion permet de gérer le positionnement par défaut de la carte.
 import { Marker } from "react-native-maps"; // pour les markers
 import * as Location from "expo-location"; // pour la GÉOLOCALISATION
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { logout } from "../reducers/user"; // handle logout
+import { useFocusEffect } from "@react-navigation/native";
 
 import {
   StyleSheet,
@@ -41,55 +41,47 @@ export default function HomeScreen({ navigation }) {
   //-----------------------------------------------initialisation-----------------------------------------------------------
 
   // AT INIT : DISPLAY USER GEOLOCALISATION ON MAP AND SET ASSOCIATED TYPS :
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchData() {
+        const { status } = await Location.requestForegroundPermissionsAsync();
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-
-      // 1) DISPLAY USER GEOLOCALISATION ON HOMESCREENN MAP AT INIT :
-      if (status === "granted") {
-        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
-          setGeoLocation({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.08,
-            longitudeDelta: 0.08,
-          });
-          setRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.08,
-            longitudeDelta: 0.08,
-          });
-
-          // 2) on appelle l'API pour afficher la ville en fonction des coords de geolocation:
-
-          // => on va sur le site de l'API : https://adresse.data.gouv.fr/api-doc/adresse
-
-          /* on choisi : /reverse/ Point d’entrée pour le géocodage inverse.
-  consignes:
-    Les paramètres lat et lon sont obligatoires: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357"
-    Le paramètre type permet forcer le type de retour: "https://api-adresse.data.gouv.fr/reverse/?lon=2.37&lat=48.357&type=street"
-  */
-
-          const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${location.coords.longitude}&lat=${location.coords.latitude}`;
-
-          fetch(url)
-            .then((response) => response.json())
-
-            // 3) on appelle la BDD pour afficher les typs sur la map:
-            .then((data) => {
-              const urlCity = `${BACKEND}/typs/${data.features[0].properties.city}`;
-              fetch(urlCity)
-                .then((response) => response.json())
-                .then((data) => {
-                  data.result && setTyps(data.city);
-                });
+        // 1) DISPLAY USER GEOLOCALISATION ON HOMESCREENN MAP AT INIT :
+        if (status === "granted") {
+          Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+            setGeoLocation({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.08,
+              longitudeDelta: 0.08,
             });
-        });
+            setRegion({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+              latitudeDelta: 0.08,
+              longitudeDelta: 0.08,
+            });
+
+            const url = `https://api-adresse.data.gouv.fr/reverse/?lon=${location.coords.longitude}&lat=${location.coords.latitude}`;
+
+            fetch(url)
+              .then((response) => response.json())
+
+              // 3) on appelle la BDD pour afficher les typs sur la map:
+              .then((data) => {
+                const urlCity = `${BACKEND}/typs/${data.features[0].properties.city}`;
+                fetch(urlCity)
+                  .then((response) => response.json())
+                  .then((data) => {
+                    data.result && setTyps(data.city);
+                  });
+              });
+          });
+        }
       }
-    })();
-  }, []);
+      fetchData();
+    }, [])
+  );
 
   //------------------------------------------------Search bar---------------------------------------------------------
 

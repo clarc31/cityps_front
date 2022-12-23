@@ -288,24 +288,18 @@ export default function NewPostScreen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         console.log("responseJson", data);
-        // creer un reducer addTyps dans user :
-        //addTyps: (state, action) => {
-        //state.value.typs.push(action.payload);
-        //},
-
-        // dispatch(addTyps(newTyps));
-
         setTitle("");
         // setCategoriesData([]);
         // setCategory('');
         setContent(null);
         setPictures(null);
-        // setModalVisible(false);
-        // setMapModaVisible(false);
         setCoordinates(null);
         // setTypsArea(null);
         setCity(null);
-        navigation.navigate("TabNavigator");
+        setImageZero(null)
+        setImageOne(null)
+        setImageTwo(null)
+        navigation.navigate("TabNavigator", {screen : 'Découvrir'});
       });
   };
 

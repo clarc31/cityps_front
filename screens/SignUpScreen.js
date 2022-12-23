@@ -141,10 +141,8 @@ const handleRegister = () => {
       // .then(data => {
             // if (data.result) {
           dispatch(login({
-          // //   firstname: signUpFirstName,
-          // //   image:image,
+            categories: idsCategoryFiltered,
              username:signUpUserName,
-          // //   email: signUpEmail,
              token: data.token, }));
             // setSignUpName('');
             // setSignUpFirstname('');
