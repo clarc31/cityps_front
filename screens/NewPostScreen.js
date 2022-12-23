@@ -18,8 +18,9 @@ import {
   Alert,
 } from "react-native";
 
-const BACKEND = "https://cityps-back.vercel.app"; // En ligne Vercel
+// const BACKEND = "https://cityps-back.vercel.app"; // En ligne Vercel
 // const BACKEND = "http://172.20.10.14:3000"; // Local Christian
+const BACKEND = "http://192.168.142.41:3000"; // Local Zouhair
 
 export default function NewPostScreen({ navigation }) {
   // states et setters
@@ -296,10 +297,10 @@ export default function NewPostScreen({ navigation }) {
         setCoordinates(null);
         // setTypsArea(null);
         setCity(null);
-        setImageZero(null)
-        setImageOne(null)
-        setImageTwo(null)
-        navigation.navigate("TabNavigator", {screen : 'Découvrir'});
+        setImageZero(null);
+        setImageOne(null);
+        setImageTwo(null);
+        navigation.navigate("TabNavigator", { screen: "Découvrir" });
       });
   };
 
